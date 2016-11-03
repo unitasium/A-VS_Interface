@@ -10,6 +10,9 @@
 *.log
 *.rec
 
+# Others
+airfoil_automation/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
