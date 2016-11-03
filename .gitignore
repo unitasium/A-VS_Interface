@@ -1,6 +1,15 @@
 # Python compile file
 *.pyc
 
+# Abaqus file
+*.dmp
+*.cae
+*.inp
+*.rpy*
+*.odb
+*.log
+*.rec
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
