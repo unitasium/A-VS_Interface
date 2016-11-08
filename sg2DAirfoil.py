@@ -841,9 +841,17 @@ def createAirfoil(project_name, control_file):
                 for j in range(len(lyp) - 1):
                     t += lyp[j][0]
                     if mc.flip == 'No':
-                        swp.offset(objectList = (gwp[web_eid[i][0]],), distance = t, side = RIGHT)
+                        swp.offset(
+                            objectList=(gwp[web_eid[i][0]],), 
+                            distance=t, 
+                            side=RIGHT
+                            )
                     elif mc.flip == 'Yes':
-                        swp.offset(objectList = (gwp[web_eid[i][0]],), distance = t, side = LEFT)
+                        swp.offset(
+                            objectList=(gwp[web_eid[i][0]],), 
+                            distance=t, 
+                            side=LEFT
+                            )
                     gwp = swp.geometry
                     gwpk = gwp.keys()
                     lid = gwpk[-1]
@@ -1028,88 +1036,139 @@ def createAirfoil(project_name, control_file):
         sgm_lyr_fpt_lps = []
         sgm_ept_lps_out = []
         for i in range(len(sgm_id_lps_out)):
-            pt_l = sgm_divpt_lps_new[i]
-            pt_r = sgm_divpt_lps_new[i+1]
-            x01 = pt_l[0]
-            y01 = pt_l[1]
-            x02 = pt_r[0]
-            y02 = pt_r[1]
-            xm1 = (x01 + x02) / 2
-            ym1 = (y01 + y02) / 2
-            pt_m1 = (xm1, ym1)
-            slope = (y02 - y01) / (x02 - x01)
-            slope_m = -1 / slope
-            ym2 = 0.0
-            xm2 = (ym2 - ym1) / slope_m + xm1
-            pt_m2 = (xm2, ym2)
-            cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
-            xt = xm2 - xm1
-            yt = ym2 - ym1
-            theta = math.atan2(yt, xt)
+            # end_v = sgm_divpt_lps_new[i]
+            # pt_r = sgm_divpt_lps_new[i+1]
+            # x01 = pt_l[0]
+            # y01 = pt_l[1]
+            # x02 = pt_r[0]
+            # y02 = pt_r[1]
+            # xm1 = (x01 + x02) / 2
+            # ym1 = (y01 + y02) / 2
+            # pt_m1 = (xm1, ym1)
+            # slope = (y02 - y01) / (x02 - x01)
+            # slope_m = -1 / slope
+            # ym2 = 0.0
+            # xm2 = (ym2 - ym1) / slope_m + xm1
+            # pt_m2 = (xm2, ym2)
+            # cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
+            # xt = xm2 - xm1
+            # yt = ym2 - ym1
+            # theta = math.atan2(yt, xt)
             sid = sgm_id_lps_out[i]
-            st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
-                          curve2 = cline_t, point2 = pt_m1)
-            gt = st.geometry
-            gtk = gt.keys()
-            c0 = gt[gtk[-1]]
-            v0 = c0.getVertices()
-            v0 = v0[0].coords
-            x0 = v0[0]
-            y0 = v0[1]
-            sgm_ept_lps_out.append((x0, y0))
+            edge_lps_out = gt[sid]
+            vt = edge_lps_out.getVertices()
+            end_v = vt[0].coords
+            # end_v = (vt[0], vt[1])
+            ept = edge_lps_out.getPointAtDistance(
+                point=end_v, distance=50, percentage=True
+            )
+            # st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
+            #               curve2 = cline_t, point2 = pt_m1)
+            # gt = st.geometry
+            # gtk = gt.keys()
+            # c0 = gt[gtk[-1]]
+            # v0 = c0.getVertices()
+            # v0 = v0[0].coords
+            # x0 = v0[0]
+            # y0 = v0[1]
+            # sgm_ept_lps_out.append((x0, y0))
+            sgm_ept_lps_out.append(ept)
             lyp_id = sgm_pt_id_lps[i][2]
             lyp = mc.layups[lyp_id][1]
             sgm_lyr_fpt_lps.append([])
             t0 = 0.0
             for j in range(len(lyp)):
+                # print '----------'
                 t = lyp[j][0] / 2 + t0
-                x = x0 + math.cos(theta) * t
-                y = y0 + math.sin(theta) * t
-                sgm_lyr_fpt_lps[i].append((x, y))
+                # x = x0 + math.cos(theta) * t
+                # y = y0 + math.sin(theta) * t
+                st.offset(
+                    objectList=(edge_lps_out,),
+                    distance=t,
+                    side=LEFT
+                )
+                gt = st.geometry
+                gtk = gt.keys()
+                # print gtk[-1]
+                mid_curve = gt[gtk[-1]]
+                # print mid_curve
+                vt = mid_curve.getVertices()
+                end_v = vt[1].coords
+                # end_v = (vt[0], vt[1])
+                # print end_v
+                mid_v = mid_curve.getPointAtDistance(
+                    point=end_v, distance=25, percentage=True
+                )
+                # print mid_v
+                # sgm_lyr_fpt_lps[i].append((x, y))
+                sgm_lyr_fpt_lps[i].append(mid_v)
                 t0 += lyp[j][0]
         
         gt = st.geometry
         sgm_lyr_fpt_hps = []
         sgm_ept_hps_out = []
         for i in range(len(sgm_id_hps_out)):
-            pt_l = sgm_divpt_hps_new[i]
-            pt_r = sgm_divpt_hps_new[i+1]
-            x01 = pt_l[0]
-            y01 = pt_l[1]
-            x02 = pt_r[0]
-            y02 = pt_r[1]
-            xm1 = (x01 + x02) / 2
-            ym1 = (y01 + y02) / 2
-            pt_m1 = (xm1, ym1)
-            slope = (y02 - y01) / (x02 - x01)
-            slope_m = -1 / slope
-            ym2 = 0.0
-            xm2 = (ym2 - ym1) / slope_m + xm1
-            pt_m2 = (xm2, ym2)
-            cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
-            xt = xm2 - xm1
-            yt = ym2 - ym1
-            theta = math.atan2(yt, xt)
+            # end_v = sgm_divpt_hps_new[i]
+            # pt_r = sgm_divpt_hps_new[i+1]
+            # x01 = pt_l[0]
+            # y01 = pt_l[1]
+            # x02 = pt_r[0]
+            # y02 = pt_r[1]
+            # xm1 = (x01 + x02) / 2
+            # ym1 = (y01 + y02) / 2
+            # pt_m1 = (xm1, ym1)
+            # slope = (y02 - y01) / (x02 - x01)
+            # slope_m = -1 / slope
+            # ym2 = 0.0
+            # xm2 = (ym2 - ym1) / slope_m + xm1
+            # pt_m2 = (xm2, ym2)
+            # cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
+            # xt = xm2 - xm1
+            # yt = ym2 - ym1
+            # theta = math.atan2(yt, xt)
             sid = sgm_id_hps_out[i]
-            st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
-                          curve2 = cline_t, point2 = pt_m1)
-            gt = st.geometry
-            gtk = gt.keys()
-            c0 = gt[gtk[-1]]
-            v0 = c0.getVertices()
-            v0 = v0[0].coords
-            x0 = v0[0]
-            y0 = v0[1]
-            sgm_ept_hps_out.append((x0, y0))
+            edge_hps_out = gt[sid]
+            vt = edge_hps_out.getVertices()
+            end_v = vt[0].coords
+            # end_v = (vt[0], vt[1])
+            ept = edge_hps_out.getPointAtDistance(
+                point=end_v, distance=50, percentage=True
+            )
+            # st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
+            #               curve2 = cline_t, point2 = pt_m1)
+            # gt = st.geometry
+            # gtk = gt.keys()
+            # c0 = gt[gtk[-1]]
+            # v0 = c0.getVertices()
+            # v0 = v0[0].coords
+            # x0 = v0[0]
+            # y0 = v0[1]
+            # sgm_ept_hps_out.append((x0, y0))
             lyp_id = sgm_pt_id_hps[i][2]
             lyp = mc.layups[lyp_id][1]
             sgm_lyr_fpt_hps.append([])
             t0 = 0.0
             for j in range(len(lyp)):
                 t = lyp[j][0] / 2 + t0
-                x = x0 + math.cos(theta) * t
-                y = y0 + math.sin(theta) * t
-                sgm_lyr_fpt_hps[i].append((x, y))
+                # x = x0 + math.cos(theta) * t
+                # y = y0 + math.sin(theta) * t
+                st.offset(
+                    objectList=(edge_hps_out,),
+                    distance=t,
+                    side=LEFT
+                )
+                gt = st.geometry
+                gtk = gt.keys()
+                mid_curve = gt[gtk[-1]]
+                vt = mid_curve.getVertices()
+                end_v = vt[0].coords
+                # print end_v
+                # end_v = (vt[0], vt[1])
+                mid_v = mid_curve.getPointAtDistance(
+                    point=end_v, distance=25, percentage=True
+                )
+                # sgm_lyr_fpt_hps[i].append((x, y))
+                sgm_lyr_fpt_hps[i].append(mid_v)
                 t0 += lyp[j][0]
                 
         del model.sketches[st_name]
@@ -1231,6 +1290,7 @@ def createAirfoil(project_name, control_file):
                 lyt_id = lyp[j][1]
                 sn = mc.lytid_name[lyt_id]
                 pt = sgm_lyr_fpt_lps[i][j]
+                # print pt
                 pt = (0.0,) + pt                  # (x, y, z)
                 ff = f.findAt((pt,))    # sequence of Face object
                 fids.append(ff[0].index)
@@ -1426,8 +1486,9 @@ def createAirfoil(project_name, control_file):
         p = model.parts[pa_name]
         vp = setViewYZ(nsg=2, obj=p, clr='Section')
         # cvp = session.viewports[session.currentViewportName]
-        vp.partDisplay.setValues(mesh = ON)
-        vp.partDisplay.meshOptions.setValues(meshTechnique = ON)
+        if vp is not None:
+            vp.partDisplay.setValues(mesh = ON)
+            vp.partDisplay.meshOptions.setValues(meshTechnique = ON)
         # cvp.enableMultipleColors()
         # cvp.setColor(initialColor = '#BDBDBD')
         # cmap = cvp.colorMappings['Section']

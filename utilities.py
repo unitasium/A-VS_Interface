@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# from abaqus import *
+from abaqus import *
 # from abaqusConstants import *
 import math
 
@@ -146,22 +146,28 @@ def refreshSets(mdb, model_name, part_name, set_fpt):
 
 def setViewYZ(vp=None, nsg=3, obj=None, clr=None):
     # from abaqus import *
-    if vp is None:
-        vp = session.viewports[session.currentViewportName]
-    if obj is not None:
-        vp.setValues(displayedObject=obj)
-    if nsg == 1 or nsg == 2:
-        vp.view.setViewpoint(viewVector=(1.0, 0.0, 0.0),
-                             cameraUpVector=(0.0, 0.0, 1.0))
-    elif nsg == 3:
-        vp.view.setViewpoint(viewVector=(1.0, 0.8, 0.6),
-                             cameraUpVector=(0.0, 0.0, 1.0))
-    if clr is not None:
-        vp.enableMultipleColors()
-        vp.setColor(initialColor='#BDBDBD')
-        cmap = vp.colorMappings[clr]
-        vp.setColor(colorMapping=cmap)
-        vp.disableMultipleColors()
-    vp.view.fitView()
+    try:
+        if vp is None:
+            vp = session.viewports[session.currentViewportName]
+    except NameError:
+        vp = None
+        pass
+    
+    if vp is not None:
+        if obj is not None:
+            vp.setValues(displayedObject=obj)
+        if nsg == 1 or nsg == 2:
+            vp.view.setViewpoint(viewVector=(1.0, 0.0, 0.0),
+                                cameraUpVector=(0.0, 0.0, 1.0))
+        elif nsg == 3:
+            vp.view.setViewpoint(viewVector=(1.0, 0.8, 0.6),
+                                cameraUpVector=(0.0, 0.0, 1.0))
+        if clr is not None:
+            vp.enableMultipleColors()
+            vp.setColor(initialColor='#BDBDBD')
+            cmap = vp.colorMappings[clr]
+            vp.setColor(colorMapping=cmap)
+            vp.disableMultipleColors()
+        vp.view.fitView()
     
     return vp
