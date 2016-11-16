@@ -1471,6 +1471,10 @@ def createAirfoil(project_name, control_file):
     #    print 'Creating job and writing input...'
         
         job = mdb.Job(name = job_name, model = model_name)
+        model.keywordBlock.synchVersions(storeNodesAndElements=False)
+        model.keywordBlock.setValues(edited=0)
+        model.keywordBlock.synchVersions(storeNodesAndElements=False)
+        model.keywordBlock.insert(0, '\n*Parameter, nsg=2')
         job.writeInput()
         
         sec_n = time.time()

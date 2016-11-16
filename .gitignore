@@ -9,6 +9,10 @@
 *.odb
 *.log
 *.rec
+*.jnl
+
+# SwiftComp file
+*.sc
 
 # Others
 airfoil_automation/
