@@ -17,12 +17,12 @@ import xml.etree.ElementTree as et
 #from convert2sc import *
 
 def createAirfoil(project_name, control_file):
-    
+
     mc = mdb.customData
 
     sec_0 = time.time()
     sec_o = sec_0
-    
+
     # Terminate flag
     # rf: Read files
     # sf: Sketch profile
@@ -37,10 +37,10 @@ def createAirfoil(project_name, control_file):
     steps = ['rf', 'sf', 'st', 'cp', 'ff', 'im', 'cs', 'ao', 'gm', 'cj']
     ns = len(steps)
     tnt = 'all'
-    
+
     mesh_size   = 0.003
     sp_transform = (0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    
+
     # cwd = os.getcwd()  # current working directory
     cwd =  os.path.dirname(control_file)
     os.chdir(cwd)
@@ -53,36 +53,36 @@ def createAirfoil(project_name, control_file):
     job_name    = project_name
     abq_input   = os.path.join(cwd, job_name+'.inp')
     tolerance   = 1.0E-05
-    
+
     f_log   = open(log_name, 'w')
     f_debug = open(debug_name, 'w')
-    
+
     mc.mid_name = {}
     mc.mname_id = {}
-    
+
     mc.layups = {}         # {id: [total_thickness, [[thickness, layer_type_id], ...]], ...}
     mc.lypid_name = {}     # {id: 'name'}
     mc.lypname_id = {}     # {'name': id}
-    
+
     mc.layer_types = {}    # {id: [material_id, angle], ...}
     mc.lytid_name = {}     # {id: 'name}
     mc.lytname_id = {}     # {'name': id}
-    
+
     # ==========================================================================
     # Read files
     # ==========================================================================
     if (tnt in steps[0:]) or (tnt == 'all'):
-        
+
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Reading file...  ' + time_now + '\n')
         milestone('Reading file...')
     #    print 'Reading file...'
-        
+
         # ----------------------------------------------------------------------
         # Read control file
         project = et.parse(control_file)
         project = project.getroot()
-        
+
         fn_shape    = project.find('shapes').text
         fn_material = project.find('materials').text
         fn_layup    = project.find('layups').text
@@ -95,14 +95,14 @@ def createAirfoil(project_name, control_file):
         ffn_shape    = os.path.join(cwd, fn_shape)
         ffn_material = os.path.join(cwd, fn_material)
         ffn_layup    = os.path.join(cwd, fn_layup)
-        
+
         mc.chord_length = float(project.find('chord_length').text)
         mc.twist_angle = float(project.find('twisted_angle').text)
         xy_offset = project.find('pitch_axis_yz').text.split()
         mc.x_offset = float(xy_offset[0])
         mc.y_offset = float(xy_offset[1])
         mc.flip = project.find('flip').text
-        
+
         # ----------------------------------------------------------------------
         # Read shape file
         coord_lps = []
@@ -154,12 +154,12 @@ def createAirfoil(project_name, control_file):
                     r = f.text
                     fills[i+1] = [int(r), int(m)]
                 nfills = len(fills)
-                
-#        if coord_lps[0] != (0.0, 0.0):
-#            coord_lps.insert(0, (0.0, 0.0))
-#        if coord_hps[0] != (0.0, 0.0):
-#            coord_hps.insert(0, (0.0, 0.0))
-        
+
+        # if coord_lps[0] != (0.0, 0.0):
+        #     coord_lps.insert(0, (0.0, 0.0))
+        # if coord_hps[0] != (0.0, 0.0):
+        #     coord_hps.insert(0, (0.0, 0.0))
+
         # ----------------------------------------------------------------------
         # Read materials
         tree = et.parse(ffn_material)
@@ -171,7 +171,7 @@ def createAirfoil(project_name, control_file):
             material_type = mtr.get('type')
             mc.mid_name[material_id] = material_name
             mc.mname_id[material_name] = material_id
-        
+
         # ----------------------------------------------------------------------
         # Read layups
         tree_layup = et.parse(ffn_layup)
@@ -197,14 +197,14 @@ def createAirfoil(project_name, control_file):
                     mc.lytname_id[lyt_name] = lyt_id
                 lyp_lyt_id = mc.lytname_id[lyt_name]
                 temp_layup.append([t, lyp_lyt_id])
-                
+
             mc.layups[lyp_id] = [total_thk, temp_layup]
             mc.lypid_name[lyp_id] = lyp_name
             mc.lypname_id[lyp_name] = lyp_id
 
         sgm_divpt_lps = []
         sgm_divpt_hps = []
-        
+
         try:
             for n in range(len(sgm_pt_id_lps) - 1):
                 ptid = sgm_pt_id_lps[n][1]
@@ -216,67 +216,62 @@ def createAirfoil(project_name, control_file):
                 sgm_divpt_hps.append(c)
         except IndexError:
             print 'Please check the dividing point number and the total number of airfoil data points'
-            
+
         coord_lps.reverse()
         coord_lps.remove((0.0, 0.0))
         coord = coord_lps + coord_hps
-            
-#        sgm_lps = {}
-#        sgm_hps = {}
-#        web_lyp = {}
-        
+
+        # sgm_lps = {}
+        # sgm_hps = {}
+        # web_lyp = {}
+
         sec_n = time.time()
         f_log.write('    Seconds spent: [{0:8.3f}]s\n'.format((sec_n - sec_o)))
         sec_o = sec_n
-        
-        
+
         try:
             model = mdb.models[model_name]
         except KeyError:
-            model = mdb.Model(name = model_name)
-        
+            model = mdb.Model(name=model_name)
+
     # ==========================================================================
     # Sketch profile
     # ==========================================================================
     if (tnt in steps[1:]) or (tnt == 'all'):
-        
+
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Sketching profile...  ' + time_now + '\n')
         milestone('Sketching profile...')
     #    print 'Sketching profile...'
-        
+
         trailing_edge = 'Sharp'
-        
+
         fill_side_pts = []
         fill_fpt = []
         fill_partition_v = []
-        
+
         if coord[-1] == coord[0]:                                                 # Open the outline
             del coord[-1]
         np = len(coord)
-        
+
         pts = tuple(coord)
-        
+
         # ----------------------------------------------------------------------
         # Sketch the airfoil surface
         sheet_size = mc.chord_length * 2.0
-        ss = model.ConstrainedSketch(name = ss_name, sheetSize = sheet_size)
+        ss = model.ConstrainedSketch(name=ss_name, sheetSize=sheet_size)
         sketch = ss
-        sketch.sketchOptions.setValues(gridOrigin = (0.0, 0.0))
-        
+        sketch.sketchOptions.setValues(gridOrigin=(0.0, 0.0))
+
         if trailing_edge == 'Straight':
-            s = sketch.Spline(points = pts)
-            l = sketch.Line(point1 = pts[-1], point2 = pts[0])
+            s = sketch.Spline(points=pts)
+            l = sketch.Line(point1=pts[-1], point2=pts[0])
             s = (s, l)
         elif trailing_edge == 'Sharp':
             last_x = (coord[-1][0] + coord[0][0]) / 2.0                           # Find the middle of the connecting line between
             last_y = (coord[-1][1] + coord[0][1]) / 2.0                           # the first and the last point.
             pts += ((last_x, last_y),)                                            # Add an extra point.
-#            print pts
-#            print len(pts)
             s = sketch.Spline(points = pts)
-#            for i in range(len(sketch.vertices.keys())):
-#                print sketch.vertices[i]
             sketch.FixedConstraint(entity = sketch.vertices[0])
             sketch.CoincidentConstraint(entity1 = sketch.vertices[np],            # Let the extra point coincide with the first point.
                                         entity2 = sketch.vertices[0])
@@ -1036,52 +1031,20 @@ def createAirfoil(project_name, control_file):
         sgm_lyr_fpt_lps = []
         sgm_ept_lps_out = []
         for i in range(len(sgm_id_lps_out)):
-            # end_v = sgm_divpt_lps_new[i]
-            # pt_r = sgm_divpt_lps_new[i+1]
-            # x01 = pt_l[0]
-            # y01 = pt_l[1]
-            # x02 = pt_r[0]
-            # y02 = pt_r[1]
-            # xm1 = (x01 + x02) / 2
-            # ym1 = (y01 + y02) / 2
-            # pt_m1 = (xm1, ym1)
-            # slope = (y02 - y01) / (x02 - x01)
-            # slope_m = -1 / slope
-            # ym2 = 0.0
-            # xm2 = (ym2 - ym1) / slope_m + xm1
-            # pt_m2 = (xm2, ym2)
-            # cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
-            # xt = xm2 - xm1
-            # yt = ym2 - ym1
-            # theta = math.atan2(yt, xt)
             sid = sgm_id_lps_out[i]
             edge_lps_out = gt[sid]
             vt = edge_lps_out.getVertices()
             end_v = vt[0].coords
-            # end_v = (vt[0], vt[1])
             ept = edge_lps_out.getPointAtDistance(
                 point=end_v, distance=50, percentage=True
             )
-            # st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
-            #               curve2 = cline_t, point2 = pt_m1)
-            # gt = st.geometry
-            # gtk = gt.keys()
-            # c0 = gt[gtk[-1]]
-            # v0 = c0.getVertices()
-            # v0 = v0[0].coords
-            # x0 = v0[0]
-            # y0 = v0[1]
-            # sgm_ept_lps_out.append((x0, y0))
             sgm_ept_lps_out.append(ept)
             lyp_id = sgm_pt_id_lps[i][2]
             lyp = mc.layups[lyp_id][1]
             sgm_lyr_fpt_lps.append([])
             t0 = 0.0
             for j in range(len(lyp)):
-                # print '----------'
                 t = lyp[j][0] / 2 + t0
-                # x = x0 + math.cos(theta) * t
-                # y = y0 + math.sin(theta) * t
                 st.offset(
                     objectList=(edge_lps_out,),
                     distance=t,
@@ -1089,18 +1052,12 @@ def createAirfoil(project_name, control_file):
                 )
                 gt = st.geometry
                 gtk = gt.keys()
-                # print gtk[-1]
                 mid_curve = gt[gtk[-1]]
-                # print mid_curve
                 vt = mid_curve.getVertices()
                 end_v = vt[1].coords
-                # end_v = (vt[0], vt[1])
-                # print end_v
                 mid_v = mid_curve.getPointAtDistance(
                     point=end_v, distance=25, percentage=True
                 )
-                # print mid_v
-                # sgm_lyr_fpt_lps[i].append((x, y))
                 sgm_lyr_fpt_lps[i].append(mid_v)
                 t0 += lyp[j][0]
         
@@ -1108,50 +1065,19 @@ def createAirfoil(project_name, control_file):
         sgm_lyr_fpt_hps = []
         sgm_ept_hps_out = []
         for i in range(len(sgm_id_hps_out)):
-            # end_v = sgm_divpt_hps_new[i]
-            # pt_r = sgm_divpt_hps_new[i+1]
-            # x01 = pt_l[0]
-            # y01 = pt_l[1]
-            # x02 = pt_r[0]
-            # y02 = pt_r[1]
-            # xm1 = (x01 + x02) / 2
-            # ym1 = (y01 + y02) / 2
-            # pt_m1 = (xm1, ym1)
-            # slope = (y02 - y01) / (x02 - x01)
-            # slope_m = -1 / slope
-            # ym2 = 0.0
-            # xm2 = (ym2 - ym1) / slope_m + xm1
-            # pt_m2 = (xm2, ym2)
-            # cline_t = st.ConstructionLine(point1 = pt_m1, point2 = pt_m2)
-            # xt = xm2 - xm1
-            # yt = ym2 - ym1
-            # theta = math.atan2(yt, xt)
             sid = sgm_id_hps_out[i]
             edge_hps_out = gt[sid]
             vt = edge_hps_out.getVertices()
             end_v = vt[0].coords
-            # end_v = (vt[0], vt[1])
             ept = edge_hps_out.getPointAtDistance(
                 point=end_v, distance=50, percentage=True
             )
-            # st.breakCurve(curve1 = gt[sid], point1 = pt_m1, 
-            #               curve2 = cline_t, point2 = pt_m1)
-            # gt = st.geometry
-            # gtk = gt.keys()
-            # c0 = gt[gtk[-1]]
-            # v0 = c0.getVertices()
-            # v0 = v0[0].coords
-            # x0 = v0[0]
-            # y0 = v0[1]
-            # sgm_ept_hps_out.append((x0, y0))
             lyp_id = sgm_pt_id_hps[i][2]
             lyp = mc.layups[lyp_id][1]
             sgm_lyr_fpt_hps.append([])
             t0 = 0.0
             for j in range(len(lyp)):
                 t = lyp[j][0] / 2 + t0
-                # x = x0 + math.cos(theta) * t
-                # y = y0 + math.sin(theta) * t
                 st.offset(
                     objectList=(edge_hps_out,),
                     distance=t,
@@ -1162,12 +1088,9 @@ def createAirfoil(project_name, control_file):
                 mid_curve = gt[gtk[-1]]
                 vt = mid_curve.getVertices()
                 end_v = vt[0].coords
-                # print end_v
-                # end_v = (vt[0], vt[1])
                 mid_v = mid_curve.getPointAtDistance(
                     point=end_v, distance=25, percentage=True
                 )
-                # sgm_lyr_fpt_hps[i].append((x, y))
                 sgm_lyr_fpt_hps[i].append(mid_v)
                 t0 += lyp[j][0]
                 
@@ -1471,10 +1394,12 @@ def createAirfoil(project_name, control_file):
     #    print 'Creating job and writing input...'
         
         job = mdb.Job(name = job_name, model = model_name)
+        # Add a keyword '*Parameter'
+        # with a parameter of dimension of SG
         model.keywordBlock.synchVersions(storeNodesAndElements=False)
         model.keywordBlock.setValues(edited=0)
         model.keywordBlock.synchVersions(storeNodesAndElements=False)
-        model.keywordBlock.insert(0, '\n*Parameter, nsg=2')
+        model.keywordBlock.insert(0, '\n*Parameter, sgdim=2')
         job.writeInput()
         
         sec_n = time.time()
@@ -1489,15 +1414,9 @@ def createAirfoil(project_name, control_file):
 
         p = model.parts[pa_name]
         vp = setViewYZ(nsg=2, obj=p, clr='Section')
-        # cvp = session.viewports[session.currentViewportName]
         if vp is not None:
             vp.partDisplay.setValues(mesh = ON)
             vp.partDisplay.meshOptions.setValues(meshTechnique = ON)
-        # cvp.enableMultipleColors()
-        # cvp.setColor(initialColor = '#BDBDBD')
-        # cmap = cvp.colorMappings['Section']
-        # cvp.setColor(colorMapping = cmap)
-        # cvp.disableMultipleColors()
     
     mdb.saveAs(pathName = cae_name)
     

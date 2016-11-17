@@ -16,6 +16,7 @@
 
 # Others
 airfoil_automation/
+test/
 fb/
 
 # Windows image file caches

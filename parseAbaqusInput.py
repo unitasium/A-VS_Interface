@@ -16,9 +16,10 @@ def parseAbaqusInput(abq_inp_name):
     densities = []
     elastics = []
     for kw in kws_obj:
-        # print kw.name
+        print kw.name
         if kw.name == 'parameter':
-            print kw
+            print kw.parameter
+            nsg = kw.parameter['sgdim']
         elif kw.name == 'node':
             n_coord = kw.data
         elif kw.name == 'element':
@@ -41,9 +42,9 @@ def parseAbaqusInput(abq_inp_name):
         elif kw.name == 'elastic':
             elastics.append(kw)
 
-    # return parameter
+    return nsg, n_coord
     # print e_connt_2d3.shape
     # print e_connt_2d4.shape
 
-abq_inp = r'test.inp'
-parseAbaqusInput(abq_inp)
+# abq_inp = r'test\weave2Dre2A.inp'
+# parseAbaqusInput(abq_inp)
