@@ -35,8 +35,10 @@ def parseAbaqusInput(abq_inp_name):
     elastics = []
 
     mtr_name2id = {}
+    lyt_name2id = {}
 
     mid = 0
+    lid = 0
     for kw in kws_obj:
         # print kw.name
         if kw.name == 'parameter':
@@ -48,7 +50,8 @@ def parseAbaqusInput(abq_inp_name):
         elif kw.name == 'node':
             # print np.array(kw.data)[:,:4]
             # print kw.data[0]
-            n_coord = np.array(kw.data)[:,:4]
+            # n_coord = np.array(kw.data)[:,:4]
+            n_coord = kw.data
             # print n_coord[0]
         elif kw.name == 'element':
             et = kw.parameter['type']
@@ -75,6 +78,9 @@ def parseAbaqusInput(abq_inp_name):
         elif kw.name == 'orientation':
             orientations.append(kw)
         elif kw.name == 'solidsection':
+            lid += 1
+            lname = kw.parameter['elset']
+            lyt_name2id[lname] = lid
             solidsections.append(kw)
             # elset = kw.parameter['elset']
             # solidsections[elset] = {}
@@ -117,10 +123,12 @@ def parseAbaqusInput(abq_inp_name):
         'elements 2d': e_connt_2d,
         'elements 3d': e_connt_3d,
         'element sets': elsets,
+        'sections': solidsections,
+        'distribution': distributions,
+        'orientation': orientations,
         'materials': materials,
         'densities': densities,
-        'elastics': elastics,
-        'material name to id': mtr_name2id
+        'elastics': elastics
         }
     
 # ====================================================================

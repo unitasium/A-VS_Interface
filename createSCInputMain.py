@@ -13,23 +13,31 @@ nodes = results['nodes']
 elements2d = results['elements 2d']
 elements3d = results['elements 3d']
 elsets = results['element sets']
+sections = results['sections']
+distributions = results['distribution']
+orientations = results['orientation']
 materials = results['materials']
 densities = results['densities']
 elastics = results['elastics']
-mtr_name2id = results['material name to id']
 
 # ========== Reorganize data for SwiftComp input ==========
 results = reorgSCInput(
     nsg,
     nodes, elements2d, elements3d, elsets,
-    materials, densities, elastics, mtr_name2id
+    sections, distributions, orientations,
+    materials, densities, elastics
 )
 n_coord = results['nodes']
-# e_connt = results['elements']
+eid_lid = results['element to layer type']
+e_connt_2d = results['elements 2d']
+e_connt_3d = results['elements 3d']
 materials = results['materials']
+layer_types = results['layer types']
 
 # ========== Write SwiftComp input ==========
 writeSCInput(
     sc_inp, nsg, n_coord,
+    eid_lid, e_connt_2d, e_connt_3d,
+    layer_types,
     materials
     )

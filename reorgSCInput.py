@@ -3,7 +3,8 @@ import numpy as np
 def reorgSCInput(
     nsg,
     nodes, elements2d, elements3d, elsets,
-    materials, densities, elastics, mtr_name2id
+    sections, distributions, orientations,
+    materials, densities, elastics
 ):
 
     material_type = {
@@ -14,22 +15,25 @@ def reorgSCInput(
         }
 
     # ----- Nodal coordinates ----------------------------------------
-    nid = nodes[:, 0]
-    if nsg == 1:
-        n_coord = nodes[:, [3,]]
-    elif nsg == 2:
-        n_coord = nodes[:, [2, 3]]
-    elif nsg == 3:
-        n_coord = nodes[:, [1, 2, 3]]
-
+    # nid = nodes[:, 0]
+    # if nsg == 1:
+    #     n_coord = nodes[:, [3,]]
+    # elif nsg == 2:
+    #     n_coord = nodes[:, [2, 3]]
+    # elif nsg == 3:
+    #     n_coord = nodes[:, [1, 2, 3]]
+    n_coord = nodes
     # print n_coord[0]
 
     # ----- Materials ------------------------------------------------
+    mtr_id = 0
     mtr = {}
+    mtr_name2id = {}
     nmate = len(materials)
     for i in range(nmate):
         mtr_name = materials[i].parameter['name']
-        mtr_id = mtr_name2id[mtr_name]
+        mtr_id += 1
+        mtr_name2id[mtr_name] = mtr_id
         try:
             mtr_type = elastics[i].parameter['type']
         except KeyError:
@@ -76,9 +80,102 @@ def reorgSCInput(
         # print elastic
         mtr[mtr_id]['elastic'].append(elastic)
 
+    # ----- Layer types ----------------------------------------------
+    lid = 0
+    lyt = []
+    lyt_name2id = {}
+    used_lyt = []
+    used_elset = []
+    for s in sections:
+        lname = s.parameter['elset']
+        # used_elset.append(lname)
+        mname = s.parameter['material']
+        mid = mtr_name2id[mname]
+        mname_angle = lname.split('/')[0]
+        if mname_angle not in used_lyt:
+            lid += 1
+            lyt_name2id[mname_angle] = lid
+            i = mname_angle.rfind('_')
+            angle = mname_angle[i+1:]
+            if 'p' in angle:
+                angle = angle[1:]
+            elif 'n' in angle:
+                angle = angle.replace('n', '-')
+            angle = float(angle.replace('D', '.'))
+            lyt.append([lid, mid, angle])
+        used_lyt.append(mname_angle)
+        used_elset.append([lname, lyt_name2id[mname_angle]])
+
+    # ----- Element connectivities -----------------------------------
+    eid_lid = {}
+    for elset_lid in used_elset:
+        es = elsets[elset_lid[0]]
+        lid = elset_lid[1]
+        for e in es:
+            eid_lid[e] = lid
+    
+    e_connt_2d3 = elements2d[3]
+    e_connt_2d4 = elements2d[4]
+    e_connt_2d6 = elements2d[6]
+    e_connt_2d8 = elements2d[8]
+
+    e_connt_3d4 = elements3d[4]
+    e_connt_3d8 = elements3d[8]
+    e_connt_3d10 = elements3d[10]
+    e_connt_3d20 = elements3d[20]
+
+    e2d = []
+    if len(e_connt_2d3) > 1:
+        e_connt_2d3 = e_connt_2d3[1:]
+        z = np.zeros((len(e_connt_2d3), 6))
+        e_connt_2d3 = np.hstack([e_connt_2d3, z])
+        e2d.append(e_connt_2d3)
+    if len(e_connt_2d4) > 1:
+        e_connt_2d4 = e_connt_2d4[1:]
+        z = np.zeros((len(e_connt_2d4), 5))
+        e_connt_2d4 = np.hstack([e_connt_2d4, z])
+        e2d.append(e_connt_2d4)
+    if len(e_connt_2d6) > 1:
+        e_connt_2d6 = e_connt_2d6[1:]
+        z = np.zeros((len(e_connt_2d6), 2))
+        e_connt_2d6 = np.hstack([e_connt_2d6, z])
+        e_connt_2d6 = np.insert(e_connt_2d6, 4, 0, axis=1)
+        e2d.append(e_connt_2d6)
+    if len(e_connt_2d8) > 1:
+        e_connt_2d8 = e_connt_2d8[1:]
+        z = np.zeros((len(e_connt_2d8), 1))
+        e_connt_2d8 = np.hstack([e_connt_2d8, z])
+        e2d.append(e_connt_2d8)
+    elements2d = np.vstack(e2d)
+
+    e3d = []
+    if len(e_connt_3d4) > 1:
+        e_connt_3d4 = e_connt_3d4[1:]
+        z = np.zeros((len(e_connt_3d4), 16))
+        e_connt_3d4 = np.hstack([e_connt_3d4, z])
+        e3d.append(e_connt_3d4)
+    if len(e_connt_3d8) > 1:
+        e_connt_3d8 = e_connt_3d8[1:]
+        z = np.zeros((len(e_connt_3d8), 12))
+        e_connt_3d8 = np.hstack([e_connt_3d8, z])
+        e3d.append(e_connt_3d8)
+    if len(e_connt_3d10) > 1:
+        e_connt_3d10 = e_connt_3d10[1:]
+        z = np.zeros((len(e_connt_3d10), 9))
+        e_connt_3d10 = np.hstack([e_connt_3d10, z])
+        e_connt_3d10 = np.insert(e_connt_3d10, 5, 0, axis=1)
+        e3d.append(e_connt_3d10)
+    if len(e_connt_2d8) > 1:
+        e3d.append(e_connt_3d20)
+    elements3d = np.vstack(e3d)
+
+
     return {
-        'node ids': nid,
+        # 'node ids': nid,
         'nodes': n_coord,
-        # 'elements': e_connt,
+        'element to layer type': eid_lid,
+        'elements 2d': elements2d,
+        'elements 3d': elements3d,
+        'layer types': lyt,
         'materials': mtr
     }
