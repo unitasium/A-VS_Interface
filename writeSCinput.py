@@ -1,11 +1,13 @@
 import codecs
+import numpy as np
 from utilities import *
 # from parseAbaqusInput import *
 
 def writeSCInput(
     sc_inp, nsg,
     n_coord, #e_m_connt,
-    eid_lid, e_connt_2d, e_connt_3d,
+    eid_all, eid_lid, e_connt_2d, e_connt_3d,
+    distr_all,
     layer_types,
     materials,
     macro_model=3, specific_model=0,
@@ -25,6 +27,12 @@ def writeSCInput(
     # e_connt = [
     #     [eid1, mid1/lid1, nid11, nid12, nid13, ...],
     #     [eid2, mid2/lid2, nid21, nid22, nid23, ...],
+    #     ...
+    # ]
+    # ---------------------------------
+    # distr_all = [
+    #     [eid1, a11, a12, a13, b11, b12, b13, c11, c12, c13],
+    #     [eid2, a21, a22, a23, b21, b22, b23, c21, c22, c23],
     #     ...
     # ]
     # ---------------------------------
@@ -72,6 +80,7 @@ def writeSCInput(
         nelem = len(e_connt_2d) + len(e_connt_3d)
         nmate = len(materials.keys())
         nslave = 0
+        nlayer = len(layer_types)
 
         # ----- Write header -----------------------------------------
         if macro_model == 1:
@@ -89,6 +98,8 @@ def writeSCInput(
         
         writeFormat(fout, 'd'*4, [analysis, elem_flag, trans_flag, temp_flag])
         fout.write('\n')
+        writeFormat(fout, 'd'*6, [nsg, nnode, nelem, nmate, nslave, nlayer])
+        fout.write('\n')
 
         # ----- Write nodal coordinates ------------------------------
         if nsg == 1:
@@ -104,7 +115,28 @@ def writeSCInput(
         fout.write('\n')
 
         # ----- Write element connectivities -------------------------
+        # eid_lid = {eid1: lid1, eid2: lid2, ...}
+        for e in e_connt_2d:
+            e = np.insert(e, 1, eid_lid[e[0]])
+            writeFormat(fout, 'd'*11, e)
+        for e in e_connt_3d:
+            e = np.insert(e, 1, eid_lid[e[0]])
+            writeFormat(fout, 'd'*22, e)
+        fout.write('\n')
 
+        # ----- Write local coordinates ------------------------------
+        for distr in distr_all:
+            eid = int(distr[0])
+            eid_all.remove(eid)
+            fout.write('{0:10d}'.format(eid))
+            writeFormat(fout, 'E'*9, distr[1:])
+        if len(eid_all) > 0:
+            a = [1.0, 0.0, 0.0]
+            b = [0.0, 1.0, 0.0]
+            c = [0.0, 0.0, 0.0]
+            for eid in eid_all:
+                writeFormat(fout, 'd'+'E'*9, [eid]+a+b+c)
+        fout.write('\n')
 
         # ----- Write layer types ------------------------------------
         for lyt in layer_types:

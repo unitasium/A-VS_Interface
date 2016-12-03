@@ -28,16 +28,19 @@ results = reorgSCInput(
     materials, densities, elastics
 )
 n_coord = results['nodes']
+eid_all = results['all elements ids']
 eid_lid = results['element to layer type']
 e_connt_2d = results['elements 2d']
 e_connt_3d = results['elements 3d']
-materials = results['materials']
+distr_all = results['distributions']
 layer_types = results['layer types']
+materials = results['materials']
 
 # ========== Write SwiftComp input ==========
 writeSCInput(
     sc_inp, nsg, n_coord,
-    eid_lid, e_connt_2d, e_connt_3d,
+    eid_all, eid_lid, e_connt_2d, e_connt_3d,
+    distr_all,
     layer_types,
     materials
     )

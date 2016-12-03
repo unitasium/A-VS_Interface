@@ -146,7 +146,11 @@ def reorgSCInput(
         z = np.zeros((len(e_connt_2d8), 1))
         e_connt_2d8 = np.hstack([e_connt_2d8, z])
         e2d.append(e_connt_2d8)
-    elements2d = np.vstack(e2d)
+    if len(e2d) > 0:
+        elements2d = np.vstack(e2d)
+        elements2d = elements2d.astype(int)
+    else:
+        elements2d = []
 
     e3d = []
     if len(e_connt_3d4) > 1:
@@ -167,15 +171,74 @@ def reorgSCInput(
         e3d.append(e_connt_3d10)
     if len(e_connt_2d8) > 1:
         e3d.append(e_connt_3d20)
-    elements3d = np.vstack(e3d)
+    if len(e3d) > 0:
+        elements3d = np.vstack(e3d)
+        elements3d = elements3d.astype(int)
+    else:
+        elements3d = []
+    nelem = len(elements2d) + len(elements3d)
+    # print nelem
+
+    # ----- Local coordinates ----------------------------------------
+    eid_all = np.arange(1, nelem+1).tolist()
+    if len(distributions) > 0:
+        # distr_all = np.array(
+        #     [(0, 0, 0, 0, 0, 0, 0),],
+        #     dtype=[
+        #         ('eid','i'),
+        #         ('a1','f'), ('a2','f'), ('a3','f'),
+        #         ('b1','f'), ('b2','f'), ('b3','f')
+        #     ]
+        # )
+        # Join all distributions
+        distr_all = np.zeros((1, 7))
+        for distr in distributions:
+            distr_all = np.vstack([distr_all, distr.data[1:]])
+        distr_all = distr_all[1:]
+        # print distr_all
+        # Extract element ids
+        eids = distr_all[:, 0]
+        # print eids
+        # Find indices of unique ids
+        eids_uni, eids_uni_i = np.unique(eids, return_index=True)
+        distr_uni = distr_all[eids_uni_i, :]
+        if nsg == 2:
+            distr_uni = distr_uni[:, :4]
+            distr_uni = np.insert(distr_uni, 1, 1, axis=1)
+            distr_uni = np.insert(distr_uni, 2, 0, axis=1)
+            distr_uni = np.insert(distr_uni, 3, 0, axis=1)
+        c_zeros = np.zeros((len(distr_uni), 3))
+        distr_all = np.hstack([distr_uni, c_zeros])
+        # Find elements not used
+        # print eids_uni
+        # for i in eids_uni:
+        #     eid_global_coord.remove(i)
+        # if len(eid_global_coord) > 0:
+        #     print eid_global_coord
+        #     eid_global_coord = np.array(eid_global_coord).reshape(-1, 1)
+        #     col_ones = np.ones((len(eid_global_coord), 1))
+        #     col_zeros = np.zeros((len(eid_global_coord), 1))
+        #     distr_global = np.vstack([
+        #         eid_global_coord,
+        #         col_ones, col_zeros, col_zeros,
+        #         col_zeros, col_ones, col_zeros,
+        #         col_zeros, col_zeros, col_zeros
+        #     ])
+        #     print distr_all.shape
+        #     print distr_global.shape
+        #     distr_all = np.vstack([distr_all, distr_global])
+
+        # print distr_all[:5]
 
 
     return {
         # 'node ids': nid,
         'nodes': n_coord,
+        'all elements ids': eid_all,
         'element to layer type': eid_lid,
         'elements 2d': elements2d,
         'elements 3d': elements3d,
+        'distributions': distr_all,
         'layer types': lyt,
         'materials': mtr
     }

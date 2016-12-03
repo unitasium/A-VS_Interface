@@ -17,14 +17,14 @@ def parseAbaqusInput(abq_inp_name):
     el_3d10_type = ['C3D10',]
     el_3d20_type = ['C3D20',]
 
-    e_connt_2d3 = np.array([0]*4)
-    e_connt_2d4 = np.array([0]*5)
-    e_connt_2d6 = np.array([0]*7)
-    e_connt_2d8 = np.array([0]*9)
-    e_connt_3d4 = np.array([0]*5)
-    e_connt_3d8 = np.array([0]*9)
-    e_connt_3d10 = np.array([0]*11)
-    e_connt_3d20 = np.array([0]*21)
+    e_connt_2d3 = np.array([[0]*4])
+    e_connt_2d4 = np.array([[0]*5])
+    e_connt_2d6 = np.array([[0]*7])
+    e_connt_2d8 = np.array([[0]*9])
+    e_connt_3d4 = np.array([[0]*5])
+    e_connt_3d8 = np.array([[0]*9])
+    e_connt_3d10 = np.array([[0]*11])
+    e_connt_3d20 = np.array([[0]*21])
 
     elsets_raw = []
     distributions = []
