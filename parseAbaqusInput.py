@@ -39,6 +39,7 @@ def parseAbaqusInput(abq_inp_name):
 
     mid = 0
     lid = 0
+    nsg = 3
     for kw in kws_obj:
         # print kw.name
         if kw.name == 'parameter':
@@ -108,12 +109,14 @@ def parseAbaqusInput(abq_inp_name):
     elsets = {}
     for elset in elsets_raw:
         elset_name = elset.parameter['elset']
-        # print elset
+        # print elset.data
         if 'generate' in elset.parameter.keys():
             [start, stop, step] = elset.data[0]
             elsets[elset_name] = np.arange(start, stop+1, step)
         else:
-            elsets[elset_name] = np.array(elset.data).ravel()
+            temp1 = np.array(elset.data[:-2]).ravel()
+            temp2 = np.array(elset.data[-1])
+            elsets[elset_name] = np.hstack([temp1, temp2])
 
     # print elsets
     # print n_coord[0]

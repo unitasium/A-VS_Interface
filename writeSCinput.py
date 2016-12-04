@@ -4,12 +4,9 @@ from utilities import *
 # from parseAbaqusInput import *
 
 def writeSCInput(
-    sc_inp, nsg,
-    n_coord, #e_m_connt,
-    eid_all, eid_lid, e_connt_2d, e_connt_3d,
-    distr_all,
-    layer_types,
-    materials,
+    sc_inp,
+    nsg, n_coord, eid_all, eid_lid, e_connt_2d, e_connt_3d,
+    distr_all, layer_types, materials,
     macro_model=3, specific_model=0,
     analysis=0, elem_flag=0, trans_flag=0, temp_flag=0,
     bk=[], sk=[], cos=[], w=1
