@@ -12,6 +12,7 @@
 *.jnl
 
 # SwiftComp file
+license
 *.sc
 
 # Others

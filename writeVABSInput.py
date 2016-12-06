@@ -1,15 +1,15 @@
 import codecs
+import math
 import numpy as np
 from utilities import *
 # from parseAbaqusInput import *
 
-def writeSCInput(
-    sc_inp,
-    nsg, n_coord, eid_all, eid_lid, e_connt_2d, e_connt_3d,
+def writeVABSInput(
+    vabs_inp,
+    nsg, n_coord, eid_all, eid_lid, e_connt_2d,
     distr_all, layer_types, materials,
-    macro_model=3, specific_model=0,
-    analysis=0, elem_flag=0, trans_flag=0, temp_flag=0,
-    bk=[], sk=[], cos=[], w=1
+    timoshenko_flag=0, thermal_flag=0, trapeze_flag=0, vlasov_flag=0,
+    curve_flag=0, ik=[], oblique_flag=0, cos=[]
 ):
 
     # ================================================================
@@ -62,67 +62,65 @@ def writeSCInput(
     #                                                    c1212
     # ================================================================
 
-    with codecs.open(sc_inp, encoding='utf-8', mode='w') as fout:
+    with codecs.open(vabs_inp, encoding='utf-8', mode='w') as fout:
         nnode = len(n_coord)
-        nelem = len(e_connt_2d) + len(e_connt_3d)
+        nelem = len(e_connt_2d)
         nmate = len(materials.keys())
-        nslave = 0
         nlayer = len(layer_types)
 
         # ----- Write header -----------------------------------------
-        if macro_model == 1:
-            writeFormat(fout, 'd', [specific_model])
-            fout.write('\n')
-            writeFormat(fout, 'EEE', bk)
-            fout.write('\n')
-            writeFormat(fout, 'EE', cos)
-            fout.write('\n')
-        elif macro_model == 2:
-            writeFormat(fout, 'd', [specific_model])
-            fout.write('\n')
-            writeFormat(fout, 'EE', sk)
-            fout.write('\n')
-        
-        writeFormat(fout, 'd'*4, [analysis, elem_flag, trans_flag, temp_flag])
+        # format_flag  nlayer
+        writeFormat(fout, 'dd', [1, nlayer])
         fout.write('\n')
-        writeFormat(fout, 'd'*6, [nsg, nnode, nelem, nmate, nslave, nlayer])
+
+        # timoshenko_flag  recover_flag  thermal_flag
+        writeFormat(fout, 'ddd',
+                    [timoshenko_flag, 0, thermal_flag])
+        fout.write('\n')
+
+        # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
+        writeFormat(fout, 'd'*4,
+                    [curve_flag, oblique_flag, trapeze_flag, vlasov_flag])
+        fout.write('\n')
+
+        if curve_flag == 1:
+            writeFormat(fout, 'EEE', ik[0])
+            fout.write('\n')
+
+        if oblique_flag == 1 and timoshenko_flag == 0:
+            writeFormat(fout, 'EE', cos[0])
+            fout.write('\n')
+
+        writeFormat(fout, 'ddd', [nnode, nelem, nmate])
         fout.write('\n')
 
         # ----- Write nodal coordinates ------------------------------
-        if nsg == 1:
-            for n in n_coord:
-                writeFormat(fout, 'dE', n[[0, 3]])
-        elif nsg == 2:
-            for n in n_coord:
-                # print n[[0, 2, 3]]
-                writeFormat(fout, 'dEE', n[[0, 2, 3]])
-        elif nsg == 3:
-            for n in n_coord:
-                writeFormat(fout, 'dEEE', n[[0, 1, 2, 3]])
+        for n in n_coord:
+            # print n[[0, 2, 3]]
+            writeFormat(fout, 'dEE', n[[0, 2, 3]])
         fout.write('\n')
 
         # ----- Write element connectivities -------------------------
         # eid_lid = {eid1: lid1, eid2: lid2, ...}
         for e in e_connt_2d:
-            e = np.insert(e, 1, eid_lid[e[0]])
-            writeFormat(fout, 'd'*11, e)
-        for e in e_connt_3d:
-            e = np.insert(e, 1, eid_lid[e[0]])
-            writeFormat(fout, 'd'*22, e)
+            writeFormat(fout, 'd'*10, e)
         fout.write('\n')
 
         # ----- Write local coordinates ------------------------------
         for distr in distr_all:
             eid = int(distr[0])
+            lid = eid_lid[eid]
             eid_all.remove(eid)
-            fout.write('{0:10d}'.format(eid))
-            writeFormat(fout, 'E'*9, distr[1:])
+            t1 = math.degrees(math.atan2(distr[6], distr[5]))
+            if t1 < 0:
+                t1 += 360.0
+            if t1 == 360.0:
+                t1 = 0.0
+            writeFormat(fout, 'ddE', [eid, lid, t1])
         if len(eid_all) > 0:
-            a = [1.0, 0.0, 0.0]
-            b = [0.0, 1.0, 0.0]
-            c = [0.0, 0.0, 0.0]
             for eid in eid_all:
-                writeFormat(fout, 'd'+'E'*9, [eid]+a+b+c)
+                lid = eid_lid[eid]
+                writeFormat(fout, 'ddE', [eid, lid, 0.0])
         fout.write('\n')
 
         # ----- Write layer types ------------------------------------
@@ -133,23 +131,21 @@ def writeSCInput(
 
         # ----- Write materials --------------------------------------
         for mid, prop in materials.items():
-            writeFormat(fout, 'ddd', [mid, prop['isotropy'], prop['ntemp']])
-            for i in range(prop['ntemp']):
-                # print prop['elastic'][:2]
-                writeFormat(fout, 'EE', prop['elastic'][i][:2])
-                if prop['isotropy'] == 0:
-                    writeFormat(fout, 'EE', prop['elastic'][i][2:])
-                elif prop['isotropy'] == 1:
-                    writeFormat(fout, 'EEE', prop['elastic'][i][2:5])
-                    writeFormat(fout, 'EEE', prop['elastic'][i][5:8])
-                    writeFormat(fout, 'EEE', prop['elastic'][i][8:11])
-                elif prop['isotropy'] == 2:
-                    writeFormat(fout, 'E'*6, prop['elastic'][i][2:8])
-                    writeFormat(fout, 'E'*5, prop['elastic'][i][8:13])
-                    writeFormat(fout, 'E'*4, prop['elastic'][i][13:17])
-                    writeFormat(fout, 'E'*3, prop['elastic'][i][17:20])
-                    writeFormat(fout, 'E'*2, prop['elastic'][i][20:22])
-                    writeFormat(fout, 'E'*1, prop['elastic'][i][22:23])
-                fout.write('\n')
+            writeFormat(fout, 'dd', [mid, prop['isotropy']])
+            if prop['isotropy'] == 0:
+                writeFormat(fout, 'EE', prop['elastic'][0][2:])
+            elif prop['isotropy'] == 1:
+                writeFormat(fout, 'EEE', prop['elastic'][0][2:5])
+                writeFormat(fout, 'EEE', prop['elastic'][0][5:8])
+                writeFormat(fout, 'EEE', prop['elastic'][0][8:11])
+            elif prop['isotropy'] == 2:
+                writeFormat(fout, 'E'*6, prop['elastic'][0][2:8])
+                writeFormat(fout, 'E'*5, prop['elastic'][0][8:13])
+                writeFormat(fout, 'E'*4, prop['elastic'][0][13:17])
+                writeFormat(fout, 'E'*3, prop['elastic'][0][17:20])
+                writeFormat(fout, 'E'*2, prop['elastic'][0][20:22])
+                writeFormat(fout, 'E'*1, prop['elastic'][0][22:23])
+            writeFormat(fout, 'E', [prop['elastic'][0][1]])
             fout.write('\n')
         fout.write('\n')
+

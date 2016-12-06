@@ -1,6 +1,6 @@
 import numpy as np
 
-def reorgSCInput(
+def reorgAbaqusInput(
     nsg,
     nodes, elements2d, elements3d, elsets,
     sections, distributions, orientations,
@@ -182,14 +182,6 @@ def reorgSCInput(
     # ----- Local coordinates ----------------------------------------
     eid_all = np.arange(1, nelem+1).tolist()
     if len(distributions) > 0:
-        # distr_all = np.array(
-        #     [(0, 0, 0, 0, 0, 0, 0),],
-        #     dtype=[
-        #         ('eid','i'),
-        #         ('a1','f'), ('a2','f'), ('a3','f'),
-        #         ('b1','f'), ('b2','f'), ('b3','f')
-        #     ]
-        # )
         # Join all distributions
         distr_all = np.zeros((1, 7))
         for distr in distributions:
@@ -209,27 +201,6 @@ def reorgSCInput(
             distr_uni = np.insert(distr_uni, 3, 0, axis=1)
         c_zeros = np.zeros((len(distr_uni), 3))
         distr_all = np.hstack([distr_uni, c_zeros])
-        # Find elements not used
-        # print eids_uni
-        # for i in eids_uni:
-        #     eid_global_coord.remove(i)
-        # if len(eid_global_coord) > 0:
-        #     print eid_global_coord
-        #     eid_global_coord = np.array(eid_global_coord).reshape(-1, 1)
-        #     col_ones = np.ones((len(eid_global_coord), 1))
-        #     col_zeros = np.zeros((len(eid_global_coord), 1))
-        #     distr_global = np.vstack([
-        #         eid_global_coord,
-        #         col_ones, col_zeros, col_zeros,
-        #         col_zeros, col_ones, col_zeros,
-        #         col_zeros, col_zeros, col_zeros
-        #     ])
-        #     print distr_all.shape
-        #     print distr_global.shape
-        #     distr_all = np.vstack([distr_all, distr_global])
-
-        # print distr_all[:5]
-
 
     return {
         # 'node ids': nid,
@@ -242,3 +213,4 @@ def reorgSCInput(
         'layer types': lyt,
         'materials': mtr
     }
+
