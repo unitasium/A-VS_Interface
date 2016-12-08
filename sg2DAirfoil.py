@@ -38,11 +38,11 @@ def createAirfoil(project_name, control_file):
     ns = len(steps)
     tnt = 'all'
 
-    mesh_size   = 0.003
+    # mesh_size   = 0.003
     sp_transform = (0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # cwd = os.getcwd()  # current working directory
-    cwd =  os.path.dirname(control_file)
+    cwd = os.path.dirname(control_file)
     os.chdir(cwd)
     log_name    = os.path.join(cwd, project_name+'.log')
     debug_name  = os.path.join(cwd, project_name+'.debug')
@@ -102,6 +102,9 @@ def createAirfoil(project_name, control_file):
         mc.x_offset = float(xy_offset[0])
         mc.y_offset = float(xy_offset[1])
         mc.flip = project.find('flip').text
+
+        mesh_size = float(project.find('mesh_size').text)
+        element_type = project.find('element_type').text
 
         # ----------------------------------------------------------------------
         # Read shape file
@@ -840,13 +843,13 @@ def createAirfoil(project_name, control_file):
                             objectList=(gwp[web_eid[i][0]],), 
                             distance=t, 
                             side=RIGHT
-                            )
+                        )
                     elif mc.flip == 'Yes':
                         swp.offset(
                             objectList=(gwp[web_eid[i][0]],), 
                             distance=t, 
                             side=LEFT
-                            )
+                        )
                     gwp = swp.geometry
                     gwpk = gwp.keys()
                     lid = gwpk[-1]
@@ -925,24 +928,30 @@ def createAirfoil(project_name, control_file):
             a.Instance(name = is1_name, part = ps, dependent = ON)
             pw1_name = project_name + '_part_web_trim1'
             iw1_name = pw1_name + '-1'
-            a.InstanceFromBooleanCut(name = pw1_name, 
-                                     instanceToBeCut = a.instances[iw0_name], 
-                                     cuttingInstances = (a.instances[im_name],), 
-                                     originalInstances = DELETE)
+            a.InstanceFromBooleanCut(
+                name = pw1_name, 
+                instanceToBeCut = a.instances[iw0_name], 
+                cuttingInstances = (a.instances[im_name],), 
+                originalInstances = DELETE
+            )
                                      
             pwf_name = project_name + '_part_web'
             iwf_name = pwf_name + '-1'
-            a.InstanceFromBooleanCut(name = pwf_name, 
-                                     instanceToBeCut = a.instances[iw1_name], 
-                                     cuttingInstances = (a.instances[is1_name],), 
-                                     originalInstances = DELETE)
+            a.InstanceFromBooleanCut(
+                name = pwf_name, 
+                instanceToBeCut = a.instances[iw1_name], 
+                cuttingInstances = (a.instances[is1_name],), 
+                originalInstances = DELETE
+            )
                                      
             psw_name = pa_name + '_web'
-            a.InstanceFromBooleanMerge(name = psw_name, 
-                                       instances = (a.instances[is0_name], a.instances[iwf_name]), 
-                                       keepIntersections = ON, 
-                                       originalInstances = DELETE, 
-                                       domain = GEOMETRY)
+            a.InstanceFromBooleanMerge(
+                name = psw_name, 
+                instances = (a.instances[is0_name], a.instances[iwf_name]), 
+                keepIntersections = ON, 
+                originalInstances = DELETE, 
+                domain = GEOMETRY
+            )
                                        
             del model.parts[ps_name]
             del model.parts[pm_name]
@@ -959,16 +968,27 @@ def createAirfoil(project_name, control_file):
             pf = createFirstShell(model, pf, sf)
             
             d, ff = pf.datums, pf.faces
-            tf = pf.MakeSketchTransform(sketchPlane = ff[0], sketchUpEdge = d[2], 
-                                        sketchPlaneSide = SIDE1, origin = (0.0, 0.0, 0.0))
-            sf1 = model.ConstrainedSketch(name = '__profile__', sheetSize = sheet_size, 
-                                          transform = tf)
+            tf = pf.MakeSketchTransform(
+                sketchPlane = ff[0],
+                sketchUpEdge = d[2], 
+                sketchPlaneSide = SIDE1,
+                origin = (0.0, 0.0, 0.0)
+            )
+            sf1 = model.ConstrainedSketch(
+                name = '__profile__',
+                sheetSize = sheet_size,
+                transform = tf
+            )
             sf1.setPrimaryObject(option = SUPERIMPOSE)
             pf.projectReferencesOntoSketch(sketch = sf1, filter = COPLANAR_EDGES)
             for vs in fill_partition_v:
                 pt1, pt2 = vs[0], vs[1]
                 sf1.Line(point1 = pt1, point2 = pt2)
-            pf.PartitionFaceBySketch(faces = tuple(ff), sketchUpEdge = d[2], sketch = sf1)
+            pf.PartitionFaceBySketch(
+                faces = tuple(ff),
+                sketchUpEdge = d[2],
+                sketch = sf1
+            )
             sf1.unsetPrimaryObject()
             del sf1
             
@@ -991,16 +1011,20 @@ def createAirfoil(project_name, control_file):
             a.Instance(name = if1_name, part = pf, dependent = ON)
             pff_name = project_name + '_part_fill'
             iff_name = pff_name + '-1'
-            a.InstanceFromBooleanCut(name = pff_name, 
-                                     instanceToBeCut = a.instances[if1_name], 
-                                     cuttingInstances = (a.instances[isw1_name],), 
-                                     originalInstances = DELETE)
+            a.InstanceFromBooleanCut(
+                name = pff_name, 
+                instanceToBeCut = a.instances[if1_name], 
+                cuttingInstances = (a.instances[isw1_name],), 
+                originalInstances = DELETE
+            )
             pswf_name = pa_name + '_fill'
-            a.InstanceFromBooleanMerge(name = pswf_name, 
-                                       instances = (a.instances[isw_name], a.instances[iff_name]), 
-                                       keepIntersections = ON, 
-                                       originalInstances = DELETE, 
-                                       domain = GEOMETRY)
+            a.InstanceFromBooleanMerge(
+                name = pswf_name, 
+                instances = (a.instances[isw_name], a.instances[iff_name]), 
+                keepIntersections = ON, 
+                originalInstances = DELETE, 
+                domain = GEOMETRY
+            )
             del model.parts[psw_name]
             del model.parts[pf_name]
             del model.parts[pff_name]
@@ -1301,17 +1325,19 @@ def createAirfoil(project_name, control_file):
             for fid in sgm_lyr_fid_lps[i]:
                 ffs = f[fid:fid+1]
                 rg = Region(faces = ffs)
-                p.MaterialOrientation(region = rg, 
-                                      orientationType = DISCRETE, 
-                                      axis = AXIS_3, 
-                                      normalAxisDefinition = VECTOR, 
-                                      normalAxisVector = (0.0, 0.0, 1.0), 
-                                      flipNormalDirection = False, 
-                                      normalAxisDirection = AXIS_3, 
-                                      primaryAxisDefinition = EDGE, 
-                                      primaryAxisRegion = par, 
-                                      primaryAxisDirection = AXIS_1, 
-                                      flipPrimaryDirection = True)
+                p.MaterialOrientation(
+                    region = rg, 
+                    orientationType = DISCRETE, 
+                    axis = AXIS_3, 
+                    normalAxisDefinition = VECTOR, 
+                    normalAxisVector = (0.0, 0.0, 1.0), 
+                    flipNormalDirection = False, 
+                    normalAxisDirection = AXIS_3, 
+                    primaryAxisDefinition = EDGE, 
+                    primaryAxisRegion = par, 
+                    primaryAxisDirection = AXIS_1, 
+                    flipPrimaryDirection = True
+                )
                                   
         for i in range(len(sgm_ept_hps_out)):
             ept = (0.0,) + sgm_ept_hps_out[i]
@@ -1321,17 +1347,19 @@ def createAirfoil(project_name, control_file):
             for fid in sgm_lyr_fid_hps[i]:
                 ffs = f[fid:fid+1]
                 rg = Region(faces = ffs)
-                p.MaterialOrientation(region = rg, 
-                                      orientationType = DISCRETE, 
-                                      axis = AXIS_3, 
-                                      normalAxisDefinition = VECTOR, 
-                                      normalAxisVector = (0.0, 0.0, 1.0), 
-                                      flipNormalDirection = False, 
-                                      normalAxisDirection = AXIS_3, 
-                                      primaryAxisDefinition = EDGE, 
-                                      primaryAxisRegion = par, 
-                                      primaryAxisDirection = AXIS_1, 
-                                      flipPrimaryDirection = True)
+                p.MaterialOrientation(
+                    region = rg, 
+                    orientationType = DISCRETE, 
+                    axis = AXIS_3, 
+                    normalAxisDefinition = VECTOR, 
+                    normalAxisVector = (0.0, 0.0, 1.0), 
+                    flipNormalDirection = False, 
+                    normalAxisDirection = AXIS_3, 
+                    primaryAxisDefinition = EDGE, 
+                    primaryAxisRegion = par, 
+                    primaryAxisDirection = AXIS_1, 
+                    flipPrimaryDirection = True
+                )
                                   
         if nwebs != 0:
             for i in range(len(web_ept)):
@@ -1342,17 +1370,19 @@ def createAirfoil(project_name, control_file):
                 for fid in web_lyr_fid[i]:
                     ffs = f[fid:fid+1]
                     rg = Region(faces = ffs)
-                    p.MaterialOrientation(region = rg, 
-                                          orientationType = DISCRETE, 
-                                          axis = AXIS_3, 
-                                          normalAxisDefinition = VECTOR, 
-                                          normalAxisVector = (0.0, 0.0, 1.0), 
-                                          flipNormalDirection = False, 
-                                          normalAxisDirection = AXIS_3, 
-                                          primaryAxisDefinition = EDGE, 
-                                          primaryAxisRegion = par, 
-                                          primaryAxisDirection = AXIS_1, 
-                                          flipPrimaryDirection = True)
+                    p.MaterialOrientation(
+                        region = rg, 
+                        orientationType = DISCRETE, 
+                        axis = AXIS_3, 
+                        normalAxisDefinition = VECTOR, 
+                        normalAxisVector = (0.0, 0.0, 1.0), 
+                        flipNormalDirection = False, 
+                        normalAxisDirection = AXIS_3, 
+                        primaryAxisDefinition = EDGE, 
+                        primaryAxisRegion = par, 
+                        primaryAxisDirection = AXIS_1, 
+                        flipPrimaryDirection = True
+                    )
         
         model.rootAssembly.regenerate()
                          
@@ -1373,8 +1403,17 @@ def createAirfoil(project_name, control_file):
         
         p = model.parts[pa_name]
         p.seedPart(size = mesh_size, deviationFactor = 0.1, minSizeFactor = 0.1)
-        f = p.faces
         p.generateMesh()
+        if element_type == 'quadratic':
+            f = p.faces
+            set_all_faces = p.Set(name='all', faces=f)
+            p.setElementType(
+                regions=set_all_faces,
+                elemTypes=(
+                    ElemType(elemCode=STRI65, elemLibrary=STANDARD),
+                    ElemType(elemCode=S8R, elemLibrary=STANDARD)
+                )
+            )
         
         model.rootAssembly.regenerate()
         
