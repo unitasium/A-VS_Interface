@@ -9,6 +9,16 @@
 *.odb
 *.log
 *.rec
+*.jnl
+
+# SwiftComp file
+license
+*.sc
+
+# Others
+airfoil_automation/
+test/
+fb/
 
 # Windows image file caches
 Thumbs.db

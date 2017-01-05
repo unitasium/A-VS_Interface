@@ -6,6 +6,7 @@ from UdetermineVolume import *
 from UdetermineNSG import *
 from userDataSG import *
 from convert2sc import *
+from createSCInputMain import *
 import time
 import os
 
@@ -90,7 +91,13 @@ def homogenization(
         else:
             w = float(w)
         
-        [sc_input, macro_model_dim] = convert2sc(
+        # [sc_input, macro_model_dim] = convert2sc(
+        #     abaqus_input, new_filename, macro_model, specific_model,
+        #     analysis, elem_flag, trans_flag, temp_flag,
+        #     bk[0], sk[0], cos[0], w
+        # )
+
+        [sc_input, macro_model_dim] = createSCInputMain(
             abaqus_input, new_filename, macro_model, specific_model,
             analysis, elem_flag, trans_flag, temp_flag,
             bk[0], sk[0], cos[0], w
