@@ -16,8 +16,10 @@ license
 *.sc
 
 # Others
+airfoil/
 airfoil_automation/
-test/
+laminate/
+Tests/
 fb/
 
 # Windows image file caches
