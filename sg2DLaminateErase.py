@@ -3,6 +3,7 @@
 from abaqus import *
 from abaqusConstants import *
 from utilities import *
+import utilities_abq as uab
 import customKernel
 
 def eraseLayups(baseline, model_name):
@@ -91,7 +92,7 @@ def eraseLayups(baseline, model_name):
     except:
             pass
     
-    refreshSets(mdb, model_name, part_name, set_fpt)
+    uab_refreshSets(mdb, model_name, part_name, set_fpt)
     
     cst_part['Set name'] = set_name
     cst_part['Set-FacePoint'] = set_fpt

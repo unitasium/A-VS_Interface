@@ -103,6 +103,8 @@ def homogenization(
             bk[0], sk[0], cos[0], w
         )
 
+    print 'Finish creating SwiftComp input.'
+
     if not gen_input_only:
         try:
             scTimestart = time.clock()
@@ -118,7 +120,7 @@ def homogenization(
             scTimeEnd = time.clock()
             scTime = scTimeEnd - scTimestart
 
-            os.system('Notepad ' + sc_input + '.k')
+            # os.system('Notepad ' + sc_input + '.k')
             print 'scTime: ' + str(scTime)
 
         except:
@@ -129,8 +131,6 @@ def homogenization(
                 for more information.
                 '''
             )
-
-            return 1
 
     return 1
 

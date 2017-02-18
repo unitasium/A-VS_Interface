@@ -4,6 +4,7 @@ from abaqus import *
 from abaqusConstants import *
 import regionToolset
 from utilities import *
+import utilities_abq as uab
 
 def setSketchPlane(nsg, part_name, model_name): 
 
@@ -37,7 +38,7 @@ def setSketchPlane(nsg, part_name, model_name):
         print 'A set "Set_layup" has been created to assign composite layup in "Property" module.'
 
     cv = session.viewports[session.currentViewportName]
-    setViewYZ(cv, nsg, p)
+    uab.setViewYZ(cv, nsg, p)
     cv.partDisplay.geometryOptions.setValues(referenceRepresentation = ON)
     
     return 1

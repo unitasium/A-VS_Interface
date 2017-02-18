@@ -4,6 +4,7 @@ from abaqus import *
 from abaqusConstants import *
 from symbolicConstants import *
 from utilities import *
+import utilities_abq as uab
 import numpy as np
 #import repr
 import customKernel
@@ -70,16 +71,12 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
         bl_idn        = 1    # self-defined id
         sgm_lyr_id    = {}
         sgm_lyr_set   = {}
-    
+
     e = p.edges
     eids = list(area.getEdges())
-#    print eids
-#    print baseline.index
     eids.remove(baseline.index)
-#    print opposite
-#    if opposite != 0:
-##        print opposite.index
-#        eids.remove(opposite.index)
+
+    # Find edges that cut two ends of the laminate
     vs_bl = baseline.getVertices()
     boundary = []
     for i in eids:
@@ -87,23 +84,27 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
         for j in vs:
             if j in vs_bl:
                 boundary.append(i)
-    
+
     bl_id  = baseline.index  # edge index, may change
     bd1_id = boundary[0]
     bd2_id = boundary[1]
     bl_pt  = baseline.pointOn[0]
     bd1_pt = e[bd1_id].pointOn[0]
     bd2_pt = e[bd2_id].pointOn[0]
+    # print bl_pt
+    # print bd1_pt
+    # print bd2_pt
     if opposite != 0:
         ob_id = opposite.index
         ob_pt = opposite.pointOn[0]
-        
-    blid_pt.append([bl_idn, bl_pt])
-        
-    layup = model.sections[section_name].layup
 
-    tks = []
-    sns = []
+    blid_pt.append([bl_idn, bl_pt])
+
+    # Find layer type for each layer from the composite section
+    # Create and store section for each layer
+    layup = model.sections[section_name].layup
+    tks = []  # List of thickness of a layup
+    sns = []  # List of section names
     total_tk = 0.0
     for layer in layup:
         tk = layer.thickness
@@ -116,177 +117,178 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
             mid_name[n+1] = mn
             mname_id[mn] = n+1
         mid = mname_id[mn]
-#        print ag
         ma = [mid, ag]
         sn = mn + '_' + str(ag)
         sns.append(sn)
         if not ma in layer_types.values():
             n = len(layer_types)
             layer_types[n+1] = ma
-            model.HomogeneousShellSection(name = sn, material = mn, thickness = 1.0)
-    
+            model.HomogeneousShellSection(name=sn, material=mn, thickness=1.0)
+
     vs = p.vertices
     vs_bl = baseline.getVertices()
     vs_bd1 = e[bd1_id].getVertices()
     vs_bd2 = e[bd2_id].getVertices()
-    v0_id = vs_bl[1]
-    if v0_id in vs_bd1:
-        v1_id = list(vs_bd1)
-#        print 'vs_bd1'
-#        print v1_id
-#        print v0_id
-        v1_id.remove(v0_id)
-        v1_id = v1_id[0]
-    elif v0_id in vs_bd2:
-        v1_id = list(vs_bd2)
-#        print 'vs_bd2'
-#        print v1_id
-#        print v0_id
-        v1_id.remove(v0_id)
-        v1_id = v1_id[0]
+    v0_id = vs_bl[0]
+    v1_id = vs_bl[1]
+    if v1_id in vs_bd1:
+        v2_id = list(vs_bd1)
+        v2_id.remove(v1_id)
+        v2_id = v2_id[0]
+    elif v1_id in vs_bd2:
+        v2_id = list(vs_bd2)
+        v2_id.remove(v1_id)
+        v2_id = v2_id[0]
     v0 = vs[v0_id]
     v1 = vs[v1_id]
+    v2 = vs[v2_id]
     pt0 = v0.pointOn[0]
     pt1 = v1.pointOn[0]
-    
+    pt2 = v2.pointOn[0]
+    # print pt0
+    # print pt1
+    # print pt2
+
+    # -----------------------
+    # Create partition sketch
+    # -----------------------
 #    print '- Partittion layups'
-#    print feat_ptt_name
     f, e, d = p.faces, p.edges, p.datums
-#    if s_name == '':
-#        s_name = 'layer_partition'
-#        t = p.MakeSketchTransform(sketchPlane = f[0], sketchUpEdge = d[2], 
-#                                  sketchPlaneSide = SIDE1, origin = (0.0, 0.0, 0.0))
-#        s = model.ConstrainedSketch(name = s_name, sheetSize = 500.0, transform = t)
-#    else:
-#        s = model.sketches[s_name]
     s_name = part_name + '_layer_partition'
     try:
         s = model.sketches[s_name]
     except KeyError:
-        t = p.MakeSketchTransform(sketchPlane = f[0], sketchUpEdge = d[2], 
-                                  sketchPlaneSide = SIDE1, origin = (0.0, 0.0, 0.0))
-        s = model.ConstrainedSketch(name = s_name, sheetSize = 500.0, transform = t)
-#    s.setPrimaryObject(option = SUPERIMPOSE)
-#    p.projectReferencesOntoSketch(sketch = s, filter = COPLANAR_EDGES)
-#    p.projectEdgesOntoSketch(sketch = s, edges = (e[bl_id],))
-#    if opposite != 0:
-#        p.projectEdgesOntoSketch(sketch = s, edges = (e[ob_id],))
-    
-    
+        t = p.MakeSketchTransform(
+            sketchPlane=f[0], sketchUpEdge=d[2],
+            sketchPlaneSide=SIDE1, origin=(0.0, 0.0, 0.0)
+        )
+        s = model.ConstrainedSketch(
+            name=s_name, sheetSize=500.0, transform=t
+        )
+
     check_side = 1
     offset_side = 'LEFT'
     ttk = 0.0
     fpt_section = []
-    
+
     g = s.geometry
-    
-    sbl = g.findAt(coordinates = (bl_pt[1], bl_pt[2]), printWarning = False)
+
+    sbl = g.findAt(coordinates=(bl_pt[1], bl_pt[2]), printWarning=False)
     if sbl == None:
-        p.projectEdgesOntoSketch(sketch = s, edges = (e[bl_id],))
-        sbl = g.findAt(coordinates = (bl_pt[1], bl_pt[2]))
-    
-    sbd1 = g.findAt(coordinates = (bd1_pt[1], bd1_pt[2]), printWarning = False)
+        p.projectEdgesOntoSketch(sketch=s, edges=(e[bl_id],))
+        sbl = g.findAt(coordinates=(bl_pt[1], bl_pt[2]))
+    print sbl.getVertices()[0].coords
+    pt0 = (0.0,) + tuple(sbl.getVertices()[0].coords)
+    pt1 = (0.0,) + tuple(sbl.getVertices()[1].coords)
+
+    sbd1 = g.findAt(coordinates=(bd1_pt[1], bd1_pt[2]), printWarning=False)
     if sbd1 == None:
-        p.projectEdgesOntoSketch(sketch = s, edges = (e[bd1_id],))
-        sbd1 = g.findAt(coordinates = (bd1_pt[1], bd1_pt[2]))
-    
-#    print s.geometry.keys()
-    sbd2 = g.findAt(coordinates = (bd2_pt[1], bd2_pt[2]), printWarning = False)
+        p.projectEdgesOntoSketch(sketch=s, edges=(e[bd1_id],))
+        sbd1 = g.findAt(coordinates=(bd1_pt[1], bd1_pt[2]))
+    pt10 = (0.0,) + tuple(sbd1.getVertices()[0].coords)
+    pt11 = (0.0,) + tuple(sbd1.getVertices()[1].coords)
+
+    sbd2 = g.findAt(coordinates=(bd2_pt[1], bd2_pt[2]), printWarning=False)
     if sbd2 == None:
-        p.projectEdgesOntoSketch(sketch = s, edges = (e[bd2_id],))
-        sbd2 = g.findAt(coordinates = (bd2_pt[1], bd2_pt[2]))
-    
-#    print s.geometry.keys()
-#    print opposite
+        p.projectEdgesOntoSketch(sketch=s, edges=(e[bd2_id],))
+        sbd2 = g.findAt(coordinates=(bd2_pt[1], bd2_pt[2]))
+    pt20 = (0.0,) + tuple(sbd2.getVertices()[0].coords)
+    pt21 = (0.0,) + tuple(sbd2.getVertices()[1].coords)
+
     if opposite != 0:
-        sob = g.findAt(coordinates = (ob_pt[1], ob_pt[2]), printWarning = False)
+        sob = g.findAt(coordinates=(ob_pt[1], ob_pt[2]), printWarning=False)
         if sob == None:
-            p.projectEdgesOntoSketch(sketch = s, edges = (e[ob_id],))
-            sob = g.findAt(coordinates = (ob_pt[1], ob_pt[2]))
-#        print sob
+            p.projectEdgesOntoSketch(sketch=s, edges=(e[ob_id],))
+            sob = g.findAt(coordinates=(ob_pt[1], ob_pt[2]))
     sbl0 = sbl
-    
-    
+
+    if pt1 == pt10:
+        pt2 = pt11
+    elif pt1 == pt11:
+        pt2 = pt10
+    elif pt1 == pt20:
+        pt2 = pt21
+    elif pt1 == pt21:
+        pt2 = pt20
+
     sgm_lyr_id[bl_idn] = []
     ctype = repr(sbl.curveType)
     if ctype == 'LINE':
         for i, tk in enumerate(tks):
-#            print 'Layer: ', str(i+1)
             milestone('Layer: ' + str(i+1))
-#            print tk
             ttk += tk/2.0
+            print offset_side
             if offset_side == 'LEFT':
-                s.offset(objectList = (sbl,), distance = ttk, side = LEFT)
+                s.offset(objectList=(sbl,), distance=ttk, side=LEFT)
             elif offset_side == 'RIGHT':
-                s.offset(objectList = (sbl,), distance = ttk, side = RIGHT)
-#            print s.geometry.keys()
+                s.offset(objectList=(sbl,), distance=ttk, side=RIGHT)
             if check_side == 1:
-                offset_side = checkOffsetSide(s, pt0, pt1, sbl, ttk)
+                offset_side = checkOffsetSide2(s, pt0, pt1, pt2, sbl, ttk)
                 check_side = 0
-#            print s.geometry.keys()
             try:
                 g = s.geometry
                 tline_id = g.keys()[-1]
-    #            print tline_id
-                s.trimExtendCurve(curve1 = g[tline_id], point1 = g[tline_id].pointOn, 
-                                  curve2 = sbd1, point2 = sbd1.pointOn)
+                s.trimExtendCurve(
+                    curve1=g[tline_id], point1=g[tline_id].pointOn,
+                    curve2=sbd1, point2=sbd1.pointOn
+                )
             except:
                 pass
-#            print s.geometry.keys()
+
             try:
                 g = s.geometry
-#                print 'try 2'
-#                print s.geometry.keys()
                 tline_id = g.keys()[-1]
-#                print tline_id
-#                print g[tline_id]
-                s.trimExtendCurve(curve1 = g[tline_id], point1 = g[tline_id].pointOn, 
-                                  curve2 = sbd2, point2 = sbd2.pointOn)
-#                print 'try 2'
-#                print s.geometry.keys()
+                s.trimExtendCurve(
+                    curve1=g[tline_id], point1=g[tline_id].pointOn,
+                    curve2=sbd2, point2=sbd2.pointOn
+                )
             except:
-#                print 'except 2'
-#                print s.geometry.keys()
                 pass
-#            print g[tline_id]
-#            print s.geometry.keys()
+
             g = s.geometry
             tline_id = g.keys()[-1]
-#            print tline_id
             tline = g[tline_id]
-            fpt = (0.0,) + tline.pointOn
+            # fpt = (0.0,) + tline.pointOn
+            fpt = (0.0,) + tline.getPointAtDistance(
+                point=tline.getVertices()[0].coords,
+                distance=50, percentage=True
+            )
             sn = sns[i]
-            fpt_section.append([fpt,sn])
-            s.delete(objectList = (tline,))
+            fpt_section.append([fpt, sn])
+            s.delete(objectList=(tline,))
 #            print s.geometry.keys()
             if not i == len(tks)-1:
                 temp = []
                 ttk += tk/2.0
                 if offset_side == 'LEFT':
-                    s.offset(objectList = (sbl,), distance = ttk, side = LEFT)
+                    s.offset(objectList=(sbl,), distance=ttk, side=LEFT)
                 elif offset_side == 'RIGHT':
-                    s.offset(objectList = (sbl,), distance = ttk, side = RIGHT)
+                    s.offset(objectList=(sbl,), distance=ttk, side=RIGHT)
 #                print s.geometry.keys()
                 try:
                     g = s.geometry
                     tline_id = g.keys()[-1]
-                    s.trimExtendCurve(curve1 = g[tline_id], point1 = g[tline_id].pointOn, 
-                                      curve2 = sbd1, point2 = sbd1.pointOn)
+                    s.trimExtendCurve(
+                        curve1=g[tline_id], point1=g[tline_id].pointOn,
+                        curve2=sbd1, point2=sbd1.pointOn
+                    )
                 except:
                     pass
 #                print s.geometry.keys()
                 try:
                     g = s.geometry
                     tline_id = g.keys()[-1]
-                    s.trimExtendCurve(curve1 = g[tline_id], point1 = g[tline_id].pointOn, 
-                                      curve2 = sbd2, point2 = sbd2.pointOn)
+                    s.trimExtendCurve(
+                        curve1=g[tline_id], point1=g[tline_id].pointOn,
+                        curve2=sbd2, point2=sbd2.pointOn
+                    )
                 except:
                     pass
 #                print s.geometry.keys()
                 g = s.geometry
                 temp.append(g.keys()[-1])
                 sgm_lyr_id[bl_idn].append(temp)
-                
+
     elif ctype == 'SPLINE' or ctype == 'ARC' or ctype == 'CIRCLE' or ctype == 'ELLIPSE':
 #        nsp = 100  # number of sample points
         spline_constrain = True
@@ -294,7 +296,7 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
         oob_pts = []
         temp_pt0 = pt1
         temp_pt1 = pt0
-        s.offset(objectList = (sob,), distance = total_tk, side = LEFT)
+        s.offset(objectList=(sob,), distance=total_tk, side=LEFT)
         a = checkOffsetSide(s, temp_pt0, temp_pt1, sob, total_tk)
         g = s.geometry
         oob_id = g.keys()[-1]  # offset oppposite boundary id
@@ -443,7 +445,11 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
             g = s.geometry
             tline_id = g.keys()[-1]
             tline = g[tline_id]
-            fpt = (0.0,) + tline.pointOn
+            # fpt = (0.0,) + tline.pointOn
+            fpt = (0.0,) + tline.getPointAtDistance(
+                point=tline.getVertices()[0].coords,
+                distance=50, percentage=True
+            )
             sn = sns[i]
             fpt_section.append([fpt,sn])
             s.delete(objectList = (tline,))
@@ -578,7 +584,7 @@ def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):
 #    for rn, fpt in set_fpt.items():
 #        ff = f.findAt((fpt,))
 #        p.Set(name = rn, faces = ff)
-    refreshSets(mdb, model_name, part_name, set_fpt)
+    uab.refreshSets(mdb, model_name, part_name, set_fpt)
     
     # Assign sections
 #    print '- Assign sections'
@@ -647,6 +653,35 @@ def checkOffsetSide(sketch, point0, point1, line, distance):
     vec2 = np.array(pt2) - np.array(pt0)
     offset_side = 'LEFT'
     if np.dot(vec1, vec2) < 0.0:
+        offset_side = 'RIGHT'
+        s.delete(objectList = (g[tline_id],))
+        s.offset(objectList = (sbl,), distance = ttk, side = RIGHT)
+    
+    return offset_side
+
+def checkOffsetSide2(sketch, point0, point1, point2, line, distance):
+    s = sketch
+    pt0 = point0
+    pt1 = point1
+    pt2 = point2
+    sbl = line
+    ttk = distance
+    
+    g = s.geometry
+    gk = g.keys()
+    tline_id = gk[-1]
+    # v = g[tline_id].getVertices()
+    # pt2 = (0.0,) + v[1].coords
+    # print pt0
+    # print pt1
+    # print pt2
+    vec1 = np.array(pt0) - np.array(pt1)
+    vec2 = np.array(pt2) - np.array(pt1)
+    offset_side = 'LEFT'
+    c = np.cross(vec1, vec2)
+    # if np.dot(vec1, vec2) < 0.0:
+    print c
+    if c[0] > 0:
         offset_side = 'RIGHT'
         s.delete(objectList = (g[tline_id],))
         s.offset(objectList = (sbl,), distance = ttk, side = RIGHT)

@@ -1,3 +1,4 @@
+from abaqus import *
 from parseAbaqusInput import *
 from reorgAbaqusInput import *
 from writeSCInput import *
@@ -18,6 +19,7 @@ def createSCInputMain(
         sc_inp = os.path.join(dir, new_filename)
 
     # ========== Parse data from Abaqus input ==========
+    milestone('Parsing data from Abaqus input...')
     results = parseAbaqusInput(abq_inp)
     nsg = results['nsg']
     nodes = results['nodes']
@@ -32,6 +34,7 @@ def createSCInputMain(
     elastics = results['elastics']
 
     # ========== Reorganize data for SwiftComp input ==========
+    milestone('Reorganizing data for SwfitComp input...')
     results = reorgAbaqusInput(
         nsg, nodes, elements2d, elements3d, elsets,
         sections, distributions, orientations,
@@ -47,6 +50,7 @@ def createSCInputMain(
     materials = results['materials']
 
     # ========== Write SwiftComp input ==========
+    milestone('Writing SwiftComp input...')
     writeSCInput(
         sc_inp,
         nsg, n_coord, eid_all, eid_lid, e_connt_2d, e_connt_3d,

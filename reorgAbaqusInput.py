@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def reorgAbaqusInput(
     nsg,
@@ -113,7 +114,7 @@ def reorgAbaqusInput(
         lid = elset_lid[1]
         for e in es:
             eid_lid[e] = lid
-    
+
     e_connt_2d3 = elements2d[3]
     e_connt_2d4 = elements2d[4]
     e_connt_2d6 = elements2d[6]
@@ -169,7 +170,7 @@ def reorgAbaqusInput(
         e_connt_3d10 = np.hstack([e_connt_3d10, z])
         e_connt_3d10 = np.insert(e_connt_3d10, 5, 0, axis=1)
         e3d.append(e_connt_3d10)
-    if len(e_connt_2d8) > 1:
+    if len(e_connt_3d20) > 1:
         e3d.append(e_connt_3d20)
     if len(e3d) > 0:
         elements3d = np.vstack(e3d)

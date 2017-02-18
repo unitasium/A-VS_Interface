@@ -1,3 +1,4 @@
+from abaqus import *
 from parseAbaqusInput import *
 from reorgAbaqusInput import *
 from writeVABSInput import *
@@ -17,6 +18,7 @@ def createVABSInputMain(
         vabs_inp = os.path.join(dir, new_filename)
 
     # ========== Parse data from Abaqus input ==========
+    milestone('Parsing data from Abaqus input...')
     results = parseAbaqusInput(abq_inp)
     # nsg = results['nsg']
     nsg = 2
@@ -31,7 +33,8 @@ def createVABSInputMain(
     densities = results['densities']
     elastics = results['elastics']
 
-    # ========== Reorganize data for SwiftComp input ==========
+    # ========== Reorganize data for VABS input ==========
+    milestone('Reorganizing data for VABS input...')
     results = reorgAbaqusInput(
         nsg, nodes, elements2d, elements3d, elsets,
         sections, distributions, orientations,
@@ -46,7 +49,8 @@ def createVABSInputMain(
     layer_types = results['layer types']
     materials = results['materials']
 
-    # ========== Write SwiftComp input ==========
+    # ========== Write VABS input ==========
+    milestone('Writing VABS input...')
     writeVABSInput(
         vabs_inp,
         nsg, n_coord, eid_all, eid_lid, e_connt_2d,

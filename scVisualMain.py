@@ -9,6 +9,7 @@ from abaqusConstants import *
 #from scVisual3D import *
 #from scVisual1D import *
 from utilities import *
+import utilities_abq as uab
 from textRepr import *
 from UcheckDehoVisual import *
 import os.path
@@ -190,6 +191,7 @@ def visualization(macro_model, ap_flag, sc_input):
                     line = line.split()
                     node_label.append(int(line[0]))
                     u_data.append((float(line[1]), float(line[2]), float(line[3])))
+        print '--> Find .u file.'
     except:
         print '--! Cannot find .u file.'
                 
@@ -213,6 +215,7 @@ def visualization(macro_model, ap_flag, sc_input):
                     temp_s = [float(i) for i in line[nsg+6:nsg+12]]
                     sg_strain.append(tuple(temp_e))
                     sg_stress.append(tuple(temp_s))
+        print '--> Find .sg file.'
     except:
         print '--! Cannot find .sg file.'
     
@@ -234,6 +237,7 @@ def visualization(macro_model, ap_flag, sc_input):
                     temp_s = [float(i) for i in line[nsg+6:nsg+12]]
                     sn_strain.append(tuple(temp_e))
                     sn_stress.append(tuple(temp_s))
+        print '--> Find .sn file.'
     except:
         print '--! Cannot find .sn file.'
         
@@ -255,6 +259,7 @@ def visualization(macro_model, ap_flag, sc_input):
                     temp_s = [float(i) for i in line[nsg+6:nsg+12]]
                     sgm_strain.append(tuple(temp_e))
                     sgm_stress.append(tuple(temp_s))
+        print '--> Find .sgm file.'
     except:
         print '--! Cannot find .sgm file.'
     
@@ -276,6 +281,7 @@ def visualization(macro_model, ap_flag, sc_input):
                     temp_s = [float(i) for i in line[nsg+6:nsg+12]]
                     snm_strain.append(tuple(temp_e))
                     snm_stress.append(tuple(temp_s))
+        print '--> Find .snm file.'
     except:
         print '--! Cannot find .snm file.'
     
@@ -389,7 +395,7 @@ def visualization(macro_model, ap_flag, sc_input):
     vp1 = session.viewports[session.currentViewportName]
     vp1.setValues(origin = da_origin, width = da_width / 2.0, height = da_height)
     da_origin = (da_origin[0] + da_width / 2.0, da_origin[1])
-    setViewYZ(vp=vp1, nsg=nsg, obj=odb)
+    uab.setViewYZ(vp=vp1, nsg=nsg, obj=odb)
     vp1.odbDisplay.setPrimaryVariable(variableLabel = 'EN', 
                                       outputPosition = ELEMENT_NODAL, 
                                       refinement = (COMPONENT, 'EN11'))
@@ -411,7 +417,7 @@ def visualization(macro_model, ap_flag, sc_input):
     
     vp2 = session.Viewport(name = 'Viewport: 2', 
                            origin = da_origin, width = da_width / 2.0, height = da_height)
-    setViewYZ(vp=vp2, nsg=nsg, obj=odb)
+    uab.setViewYZ(vp=vp2, nsg=nsg, obj=odb)
     vp2.odbDisplay.setPrimaryVariable(variableLabel = 'SN', 
                                      outputPosition = ELEMENT_NODAL, 
                                      refinement = (COMPONENT, 'SN11'))
@@ -852,7 +858,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
 
     # -----------------------
     # Create a dummy material
-    
+    print ' --> Creating a dummy material...'
     material_name = 'Elastic material'
     material_1 = odb_vis.Material(name = material_name)
     material_1.Elastic(type = ISOTROPIC, 
@@ -865,6 +871,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
                        
     # -------------------------
     # Create different sections
+    print ' --> Creating dummy sections...'
     section_name_g = 'Homogeneous solid section'
     abq_section = {}
     for k in elem_sectn.keys():
@@ -875,15 +882,17 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # -----------------
     # Create a new part
-    
+    print ' --> Creating a new part...'
     part_1 = odb_vis.Part(name = 'Part-1', embeddedSpace = THREE_D, type = DEFORMABLE_BODY)
     node_coord = tuple(node_coord)
     # Import nodes
+    print ' --> Importing nodes...'
     part_1.addNodes(nodeData = node_coord, nodeSetName = 'nSet-1')
     odb_vis.save()
     
 #    elem_connt = tuple(elem_connt)
     # Import elements
+    print ' --> Importing elements...'
     if elem_connt_c4 != []:
         elem_connt_c4 = tuple(elem_connt_c4)
         part_1.addElements(elementData = elem_connt_c4, type = 'C3D4', elementSetName = 'eSet-c3d4')
@@ -900,7 +909,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # ---------------------
     # Create a new instance
-    
+    print ' --> Creating a new instance...'
     instance_1 = odb_vis.rootAssembly.Instance(name = 'Part-1-1', object = part_1)
     for k in elem_sectn.keys():  # Assign sections to element sets
         section_name = section_name_g + ' - ' + k
@@ -912,14 +921,14 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # ---------------------------
     # Create a new step and frame
-    
+    print ' --> Creating new step and frame...'
     step_1 = odb_vis.Step(name = 'Step-1', description = '', domain = TIME, timePeriod = 1.0)
     analysis_time = 0.1
     frame_1 = step_1.Frame(incrementNumber = 1, frameValue = analysis_time, description = '')
     
     # ------------------------
     # Import displacement data
-    
+    print ' --> Importing displacement data...'
     if u_data != []:
         u_data = tuple(u_data)
         u_field = frame_1.FieldOutput(name = 'U', description = 'Displacements.', type = VECTOR,
@@ -935,8 +944,10 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     # Import strain and stress data
     
     # ---- GLOBAL COORDINATES ----
+    print ' --> Importing strain and stress data under global coordinates...'
     # Strains at integration points
     if sg_strain != []:
+        print '  --> Strains at integration points...'
         s_field = frame_1.FieldOutput(
             name = 'EG', 
             description = 'Strains at Gaussian points in the global coordinates.', 
@@ -954,6 +965,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Stresses at integration points
     if sg_stress != []:
+        print '  --> Stresses at integration points...'
         s_field = frame_1.FieldOutput(
             name = 'SG', 
             description = 'Stresses at Gaussian points in the global coordinates.', 
@@ -971,6 +983,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Strains at elemental nodes
     if sn_strain != []:
+        print '  --> Strains at elemental nodes...'
         e_field = frame_1.FieldOutput(
             name = 'EN', 
             description = 'Strains at nodes in the global coordinates.', 
@@ -989,6 +1002,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Stresses at elemental nodes
     if sn_stress != []:
+        print '  --> Stresses at elemental nodes...'
         s_field = frame_1.FieldOutput(
             name = 'SN', 
             description = 'Stresses at nodes in the global coordinates.', 
@@ -1005,8 +1019,10 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
         odb_vis.save()
     
     # ---- MATERIAL COORDINATES ----
+    print ' --> Importing strain and stress data under material coordinates...'
     # Strains at integration points
     if sgm_strain != []:
+        print '  --> Strains at integration points...'
         s_field = frame_1.FieldOutput(
             name = 'EGM', 
             description = 'Strains at Gaussian points in the material coordinates.', 
@@ -1024,6 +1040,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Stresses at integration points
     if sgm_stress != []:
+        print '  --> Stresses at integration points...'
         s_field = frame_1.FieldOutput(
             name = 'SGM', 
             description = 'Stresses at Gaussian points in the material coordinates.', 
@@ -1041,6 +1058,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Strains at elemental nodes
     if snm_strain != []:
+        print '  --> Strains at elemental nodes...'
         e_field = frame_1.FieldOutput(
             name = 'ENM', 
             description = 'Strains at nodes in the material coordinates.', 
@@ -1058,6 +1076,7 @@ def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt
     
     # Stresses at elemental nodes
     if snm_stress != []:
+        print '  --> Stresses at elemental nodes...'
         s_field = frame_1.FieldOutput(
             name = 'SNM', 
             description = 'Stresses at nodes in the material coordinates.', 

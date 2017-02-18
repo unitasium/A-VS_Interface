@@ -82,7 +82,7 @@ def writeSCInput(
             fout.write('\n')
             writeFormat(fout, 'EE', sk)
             fout.write('\n')
-        
+
         writeFormat(fout, 'd'*4, [analysis, elem_flag, trans_flag, temp_flag])
         fout.write('\n')
         writeFormat(fout, 'd'*6, [nsg, nnode, nelem, nmate, nslave, nlayer])
@@ -152,4 +152,7 @@ def writeSCInput(
                     writeFormat(fout, 'E'*1, prop['elastic'][i][22:23])
                 fout.write('\n')
             fout.write('\n')
+        fout.write('\n')
+
+        writeFormat(fout, 'E', [w])
         fout.write('\n')

@@ -7,6 +7,7 @@ from assembly import *
 from mesh import *
 from job import *
 from utilities import *
+import utilities_abq as uab
 import customKernel
 import sys
 import time
@@ -76,7 +77,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Reading file...  ' + time_now + '\n')
         milestone('Reading file...')
-    #    print 'Reading file...'
+        print 'Reading file...'
 
         # ----------------------------------------------------------------------
         # Read control file
@@ -137,11 +138,13 @@ def createAirfoil(project_name, control_file):
                 lps = lyp.find('lps').text.strip().split('\n')
                 for l in lps:
                     l = l.split()
-                    sgm_pt_id_lps.append([int(l[0]), int(l[1]), int(l[2])])
+                    # sgm_pt_id_lps.append([int(l[0]), int(l[1]), int(l[2])])
+                    sgm_pt_id_lps.append([int(l[0]), int(l[1]), l[2]])
                 hps = lyp.find('hps').text.strip().split('\n')
                 for l in hps:
                     l = l.split()
-                    sgm_pt_id_hps.append([int(l[0]), int(l[1]), int(l[2])])
+                    # sgm_pt_id_hps.append([int(l[0]), int(l[1]), int(l[2])])
+                    sgm_pt_id_hps.append([int(l[0]), int(l[1]), l[2]])
             elif strct == 'web':
                 bl = p.find('baseline')
                 for i, w in enumerate(bl):
@@ -150,12 +153,12 @@ def createAirfoil(project_name, control_file):
                 nwebs = len(webs)
                 lyp = p.find('layup').text.strip().split('\n')
                 for l in lyp:
-                    webs_layup.append(int(l))
+                    webs_layup.append(l)
             elif strct == 'filling':
                 for i, f in enumerate(p):
                     m = f.get('material')
                     r = f.text
-                    fills[i+1] = [int(r), int(m)]
+                    fills[i+1] = [int(r), m]
                 nfills = len(fills)
 
         # if coord_lps[0] != (0.0, 0.0):
@@ -168,42 +171,74 @@ def createAirfoil(project_name, control_file):
         tree = et.parse(ffn_material)
         mtr_root = tree.getroot()
 
+        material_id = 0
         for mtr in mtr_root:
-            material_id   = int(mtr.find('id').text)
+            # material_id   = int(mtr.find('id').text)
+            material_id += 1
             material_name = mtr.find('name').text
             material_type = mtr.get('type')
             mc.mid_name[material_id] = material_name
             mc.mname_id[material_name] = material_id
+
+        for v in fills.values():
+            mname = v[1]
+            mid = mc.mname_id[mname]
+            v[1] = mid
 
         # ----------------------------------------------------------------------
         # Read layups
         tree_layup = et.parse(ffn_layup)
         root_layup = tree_layup.getroot()
 
-        lyt_id = 0
+        lyp_id = 0  # layup id
+        lyt_id = 0  # layer type id
         for layup in root_layup:
-            lyp_id = int(layup.find('id').text)
+            # lyp_id = int(layup.find('id').text)
+            lyp_id += 1
             lyp_name = layup.find('name').text
-            lyp_data = layup.find('data').text
-            lyp_data = lyp_data.strip().split('\n')
+            # lyp_data = layup.find('data').text
+            # lyp_data = lyp_data.strip().split('\n')
+            layers = layup.findall('layer')
             total_thk = 0.0
             temp_layup = []
-            for l in lyp_data:
-                l = l.split()
-                [t, m, a] = [float(l[0]), int(l[1]), float(l[2])]
+            for layer in layers:
+                # l = l.split()
+                # [t, m, a] = [float(l[0]), int(l[1]), float(l[2])]
+                mname = layer.find('material').text
+                mid = mc.mname_id[mname]
+                t = float(layer.find('thickness').text)
+                fo = float(layer.find('fiber_orient').text)
                 total_thk += t
-                lyt_name = mc.mid_name[m] + '_' + str(a)
+                # lyt_name = mc.mid_name[m] + '_' + str(fo)
+                lyt_name = mname + '_' + str(fo)
                 if lyt_name not in mc.lytname_id.keys():
                     lyt_id += 1
-                    mc.layer_types[lyt_id] = [m, a]
+                    mc.layer_types[lyt_id] = [mid, fo]
                     mc.lytid_name[lyt_id] = lyt_name
                     mc.lytname_id[lyt_name] = lyt_id
                 lyp_lyt_id = mc.lytname_id[lyt_name]
                 temp_layup.append([t, lyp_lyt_id])
 
+            # print mc.layer_types
+
             mc.layups[lyp_id] = [total_thk, temp_layup]
             mc.lypid_name[lyp_id] = lyp_name
             mc.lypname_id[lyp_name] = lyp_id
+
+        for sgm in sgm_pt_id_lps:
+            lyp_name = sgm[2]
+            lyp_id = mc.lypname_id[lyp_name]
+            sgm[2] = lyp_id
+
+        for sgm in sgm_pt_id_hps:
+            lyp_name = sgm[2]
+            lyp_id = mc.lypname_id[lyp_name]
+            sgm[2] = lyp_id
+
+        for i in range(len(webs_layup)):
+            lyp_name = webs_layup[i]
+            lyp_id = mc.lypname_id[lyp_name]
+            webs_layup[i] = lyp_id
 
         sgm_divpt_lps = []
         sgm_divpt_hps = []
@@ -220,8 +255,9 @@ def createAirfoil(project_name, control_file):
         except IndexError:
             print 'Please check the dividing point number and the total number of airfoil data points'
 
+        coord_y = coord_lps[0][1]
         coord_lps.reverse()
-        coord_lps.remove((0.0, 0.0))
+        coord_lps.remove(coord_lps[-1])
         coord = coord_lps + coord_hps
 
         # sgm_lps = {}
@@ -245,7 +281,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Sketching profile...  ' + time_now + '\n')
         milestone('Sketching profile...')
-    #    print 'Sketching profile...'
+        print 'Sketching profile...'
 
         trailing_edge = 'Sharp'
 
@@ -284,8 +320,8 @@ def createAirfoil(project_name, control_file):
             s = sketch.Spline(points = pts)
             s = (s,)
         
-        cline_h = sketch.ConstructionLine(point1 = (-1.0, 0.0),                # Horizontal reference line
-                                          point2 = (0.0, 0.0))
+        cline_h = sketch.ConstructionLine(point1 = (-1.0, coord_y),                # Horizontal reference line
+                                          point2 = (0.0, coord_y))
         sketch.HorizontalConstraint(entity = cline_h)
         cline_v = sketch.ConstructionLine(point1 = (0.0, -1.0),                # Vertical reference line at the leading edge
                                           point2 = (0.0, 1.0))
@@ -461,7 +497,7 @@ def createAirfoil(project_name, control_file):
         gid_hps = sgm_id_hps_in[-1]
         sgm_id_lps_in.remove(sgm_id_lps_in[-1])
         sgm_id_hps_in.remove(sgm_id_hps_in[-1])
-        [new_l, new_h] = trimIntersectCurves(sketch, gid_lps, 2, gid_hps, 1, (1.0, 0.0))
+        [new_l, new_h] = uab.trimIntersectCurves(sketch, gid_lps, 2, gid_hps, 1, (1.0, 0.0))
         sgm_id_lps_in.append(new_l)
         sgm_id_hps_in.append(new_h)
         
@@ -484,8 +520,8 @@ def createAirfoil(project_name, control_file):
             v1 = v_lps_in[i][1]
             v2  = v_lps_in[i+1][0]
             v0 = sgm_divpt_lps_new[i+1]
-            d1 = findTwoPointsDistance(v0, v1)
-            d2 = findTwoPointsDistance(v0, v2)
+            d1 = uab.findTwoPointsDistance(v0, v1)
+            d2 = uab.findTwoPointsDistance(v0, v2)
             if d1 < d2:
                 v_near_lps.append(v1)
             elif d1 > d2:
@@ -508,8 +544,8 @@ def createAirfoil(project_name, control_file):
             v1 = v_hps_in[i][1]
             v2  = v_hps_in[i+1][0]
             v0 = sgm_divpt_hps_new[i+1]
-            d1 = findTwoPointsDistance(v0, v1)
-            d2 = findTwoPointsDistance(v0, v2)
+            d1 = uab.findTwoPointsDistance(v0, v1)
+            d2 = uab.findTwoPointsDistance(v0, v2)
             if d1 < d2:
                 v_near_hps.append(v1)
             elif d1 > d2:
@@ -536,8 +572,12 @@ def createAirfoil(project_name, control_file):
         # -----------------------------------------------------------------------
         
         if nwebs != 0:
-            pt1 = (-mc.chord_length, mc.chord_length)
-            pt2 = (mc.chord_length, -mc.chord_length)
+            if mc.chord_length > 1.0:
+                a = mc.chord_length * 2
+            else:
+                a = 2.0
+            pt1 = (-a, a)
+            pt2 = (a, -a)
             sm.rectangle(point1 = pt1, point2 = pt2)
             
             gm = sm.geometry
@@ -563,7 +603,7 @@ def createAirfoil(project_name, control_file):
                     vector = (x_offset_t, 0.0))
             sm.scale(objectList = objects_all, 
                      scaleCenter = (0.0, 0.0), 
-                     scaleValue = mc.chord_length)
+                     scaleValue = mc.chord_length * 0.999)
             sm.rotate(objectList = objects_all, 
                       centerPoint = (0.0, 0.0), 
                       angle = twist_angle_t)
@@ -633,7 +673,10 @@ def createAirfoil(project_name, control_file):
                       angle = twist_angle_t)
                       
             gw = sw.geometry
-            web_ept = []
+            web_ept = []  # coordinates of middle point of each side of each web
+                          # [[(w1lx, w1ly), (w1tx, w1ty)], [(w2lx, w2ly), (w2tx, w2ty)], ...]
+                          # l: the side near leading edge
+                          # t: the side near trailing edge
             web_eid = []
             for k, v in webs.items():
                 lyp_id = webs_layup[k-1]
@@ -698,7 +741,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Sketching partition...  ' + time_now + '\n')
         milestone('Sketching partition...')
-    #    print 'Sketching partition...'
+        print 'Sketching partition...'
         
         # Copy the sketch
         ssp_name = project_name + '_sketch_surface_layers'
@@ -797,7 +840,7 @@ def createAirfoil(project_name, control_file):
             gpk = gp.keys()
             id_1 = gpk[-2]
             id_2 = gpk[-1]
-            [new_id_lps, new_id_hps] = trimIntersectCurves(ssp, id_1, 2, id_2, 1, (1.0, 0.0))
+            [new_id_lps, new_id_hps] = uab.trimIntersectCurves(ssp, id_1, 2, id_2, 1, (1.0, 0.0))
             sgm_lyr_id_lps[-1].append(new_id_lps)
             sgm_lyr_id_hps[-1].append(new_id_hps)
             temp_curve_id_list.append(new_id_lps)
@@ -831,7 +874,11 @@ def createAirfoil(project_name, control_file):
             swp = model.ConstrainedSketch(name = swp_name, 
                                          objectToCopy = model.sketches[sw_name])
             gwp = swp.geometry
-            web_lyr_pt = [[web_ept[0][0]],[web_ept[1][0]]]
+            # web_lyr_pt = [[web_ept[0][0]],[web_ept[1][0]]]
+            web_lyr_pt = []
+            for i in range(len(web_ept)):
+                web_lyr_pt.append([web_ept[i][0]])
+            
             for i in range(len(webs_layup)):
                 lyp_id = webs_layup[i]
                 lyp = mc.layups[lyp_id][1]
@@ -890,51 +937,62 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Creating part and assembly...  ' + time_now + '\n')
         milestone('Creating part and assembly...')
-    #    print 'Creating part and assembly...'
+        print 'Creating part and assembly...'
         
         ps_name = project_name + '_part_surface'
+        print '  Creating part', ps_name
         ps = createPartYZ(model_name, ps_name)
         ps = createFirstShell(model, ps, ss)
+        print '  Partitioning part', ps_name
+        # del model.sketches['__temp__']
         ps = partitionPart(model, ps, ssp)
         
         is0_name = ps_name + '-1'
         a = model.rootAssembly
         a.DatumCsysByDefault(CARTESIAN)
+        print '  Creating instance', is0_name
         a.Instance(name = is0_name, part = ps, dependent = ON)
         pa_name = ps_name
         
 #        print pa_name
-        
         if nwebs != 0:
+            print '  Assembling webs...'
             sm = model.sketches[sm_name]
             sw = model.sketches[sw_name]
             swp = model.sketches[swp_name]
             pm_name = project_name + '_part_mask'
             pw0_name = project_name + '_part_web_trim0'
 
+            print '  Creating part', pm_name
             pm = createPartYZ(model_name, pm_name)
             pm = createFirstShell(model, pm, sm)
 
+            print '  Creating part', pw0_name
             pw = createPartYZ(model_name, pw0_name)
             pw = createFirstShell(model, pw, sw)
+            print '  Partitioning part', pw0_name
             pw = partitionPart(model, pw, swp)
             
             # Cut webs by mask
             im_name = pm_name + '-1'
             iw0_name = pw0_name + '-1'
             is1_name = ps_name + '_copy-1'
+            print '  Creating instance', im_name
             a.Instance(name = im_name, part = pm, dependent = ON)
+            print '  Creating instance', iw0_name
             a.Instance(name = iw0_name, part = pw, dependent = ON)
+            print '  Creating instance', is1_name
             a.Instance(name = is1_name, part = ps, dependent = ON)
             pw1_name = project_name + '_part_web_trim1'
             iw1_name = pw1_name + '-1'
+            print '  Trimming web', iw0_name, 'by mask'
             a.InstanceFromBooleanCut(
                 name = pw1_name, 
                 instanceToBeCut = a.instances[iw0_name], 
                 cuttingInstances = (a.instances[im_name],), 
                 originalInstances = DELETE
             )
-                                     
+            print '  Trimming web', iw1_name, 'by surface'
             pwf_name = project_name + '_part_web'
             iwf_name = pwf_name + '-1'
             a.InstanceFromBooleanCut(
@@ -943,7 +1001,7 @@ def createAirfoil(project_name, control_file):
                 cuttingInstances = (a.instances[is1_name],), 
                 originalInstances = DELETE
             )
-                                     
+            print '  Assembling surface', is0_name, 'and', iwf_name
             psw_name = pa_name + '_web'
             a.InstanceFromBooleanMerge(
                 name = psw_name, 
@@ -952,7 +1010,7 @@ def createAirfoil(project_name, control_file):
                 originalInstances = DELETE, 
                 domain = GEOMETRY
             )
-                                       
+            
             del model.parts[ps_name]
             del model.parts[pm_name]
             del model.parts[pw0_name]
@@ -963,6 +1021,7 @@ def createAirfoil(project_name, control_file):
             a.regenerate()
             
         if nfills != 0:
+            print '  Assembling fillings...'
             pf_name = project_name + '_part_fill_cut0'
             pf = createPartYZ(model_name, pf_name)
             pf = createFirstShell(model, pf, sf)
@@ -1044,7 +1103,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Finding layer faces...  ' + time_now + '\n')
         milestone('Finding layer faces...')
-    #    print 'Finding layer faces...'
+        print 'Finding layer faces...'
         
         # Copy the sketch
         st_name = project_name + '_temp'
@@ -1096,6 +1155,7 @@ def createAirfoil(project_name, control_file):
             ept = edge_hps_out.getPointAtDistance(
                 point=end_v, distance=50, percentage=True
             )
+            sgm_ept_hps_out.append(ept)
             lyp_id = sgm_pt_id_hps[i][2]
             lyp = mc.layups[lyp_id][1]
             sgm_lyr_fpt_hps.append([])
@@ -1133,11 +1193,12 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Importing materials...  ' + time_now + '\n')
         milestone('Importing materials...')
-    #    print 'Importing materials...'
+        print 'Importing materials...'
         
         for mtr in mtr_root:
-            material_id   = int(mtr.find('id').text)
+            # material_id   = int(mtr.find('id').text)
             material_name = mtr.find('name').text
+            material_id = mc.mname_id[material_name]
             material_type = mtr.get('type')
             density = mtr.find('density')
             m = model.Material(name = material_name)
@@ -1224,7 +1285,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Creating and assigning sections...  ' + time_now + '\n')
         milestone('Creating and assigning sections...')
-    #    print 'Creating and assigning sections...'
+        print 'Creating and assigning sections...'
         
         p = model.parts[pa_name]
         f = p.faces
@@ -1312,7 +1373,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Assigning orientations...  ' + time_now + '\n')
         milestone('Assigning orientations...')
-    #    print 'Assigning orientations...'
+        print 'Assigning orientations...'
         
         p = model.parts[pa_name]
         f = p.faces
@@ -1330,7 +1391,7 @@ def createAirfoil(project_name, control_file):
                     orientationType = DISCRETE, 
                     axis = AXIS_3, 
                     normalAxisDefinition = VECTOR, 
-                    normalAxisVector = (0.0, 0.0, 1.0), 
+                    normalAxisVector = (1.0, 0.0, 0.0), 
                     flipNormalDirection = False, 
                     normalAxisDirection = AXIS_3, 
                     primaryAxisDefinition = EDGE, 
@@ -1338,7 +1399,7 @@ def createAirfoil(project_name, control_file):
                     primaryAxisDirection = AXIS_1, 
                     flipPrimaryDirection = True
                 )
-                                  
+        
         for i in range(len(sgm_ept_hps_out)):
             ept = (0.0,) + sgm_ept_hps_out[i]
             edg = e.findAt((ept,))
@@ -1352,7 +1413,7 @@ def createAirfoil(project_name, control_file):
                     orientationType = DISCRETE, 
                     axis = AXIS_3, 
                     normalAxisDefinition = VECTOR, 
-                    normalAxisVector = (0.0, 0.0, 1.0), 
+                    normalAxisVector = (1.0, 0.0, 0.0), 
                     flipNormalDirection = False, 
                     normalAxisDirection = AXIS_3, 
                     primaryAxisDefinition = EDGE, 
@@ -1375,7 +1436,7 @@ def createAirfoil(project_name, control_file):
                         orientationType = DISCRETE, 
                         axis = AXIS_3, 
                         normalAxisDefinition = VECTOR, 
-                        normalAxisVector = (0.0, 0.0, 1.0), 
+                        normalAxisVector = (1.0, 0.0, 0.0), 
                         flipNormalDirection = False, 
                         normalAxisDirection = AXIS_3, 
                         primaryAxisDefinition = EDGE, 
@@ -1399,7 +1460,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Generating mesh...  ' + time_now + '\n')
         milestone('Generating mesh...')
-    #    print 'Generating mesh...'
+        print 'Generating mesh...'
         
         p = model.parts[pa_name]
         p.seedPart(size = mesh_size, deviationFactor = 0.1, minSizeFactor = 0.1)
@@ -1430,7 +1491,7 @@ def createAirfoil(project_name, control_file):
         time_now = time.strftime('%H:%M:%S', time.localtime())
         f_log.write('--> Creating job and writing input...  ' + time_now + '\n')
         milestone('Creating job and writing input...')
-    #    print 'Creating job and writing input...'
+        print 'Creating job and writing input...'
         
         job = mdb.Job(name = job_name, model = model_name)
         # Add a keyword '*Parameter'
@@ -1452,7 +1513,7 @@ def createAirfoil(project_name, control_file):
     if tnt == 'all':
 
         p = model.parts[pa_name]
-        vp = setViewYZ(nsg=2, obj=p, clr='Section')
+        vp = uab.setViewYZ(nsg=2, obj=p, clr='Section')
         if vp is not None:
             vp.partDisplay.setValues(mesh = ON)
             vp.partDisplay.meshOptions.setValues(meshTechnique = ON)

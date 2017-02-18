@@ -3,14 +3,13 @@ import numpy as np
 import inpParser
 
 def parseAbaqusInput(abq_inp_name):
-    # fn = r'airfoil_automation\test_1102.inp'
-    # drt = r'D:\Study\Graduate\Abaqus\A-VS_Interface\airfoil_automation'
+
     inp = inpParser.InputFile(abq_inp_name)
     kws_obj = inp.parse(usePyArray=True)
 
     el_2d3_type = ['S3', 'S3R']
     el_2d4_type = ['S4', 'S4R']
-    el_2d6_type = []
+    el_2d6_type = ['STRI65',]
     el_2d8_type = ['S8R',]
     el_3d4_type = []
     el_3d8_type = ['C3D8', 'C3D8R',]
@@ -78,21 +77,11 @@ def parseAbaqusInput(abq_inp_name):
             distributions.append(kw)
         elif kw.name == 'orientation':
             orientations.append(kw)
-        elif kw.name == 'solidsection':
+        elif kw.name == 'solidsection' or kw.name == 'shellsection':
             lid += 1
             lname = kw.parameter['elset']
             lyt_name2id[lname] = lid
             solidsections.append(kw)
-            # elset = kw.parameter['elset']
-            # solidsections[elset] = {}
-            # mtr = kw.parameter['material']
-            # try:
-            #     ori = kw.parameter['orientation']
-            # except KeyError:
-            #     ori = 'none'
-            #     pass
-            # solidsections[elset]['material'] = mtr
-            # solidsections[elset]['orientation'] = ori
         elif kw.name == 'material':
             mid += 1
             mname = kw.parameter['name']
@@ -114,7 +103,7 @@ def parseAbaqusInput(abq_inp_name):
             [start, stop, step] = elset.data[0]
             elsets[elset_name] = np.arange(start, stop+1, step)
         else:
-            temp1 = np.array(elset.data[:-2]).ravel()
+            temp1 = np.array(elset.data[:-1]).ravel()
             temp2 = np.array(elset.data[-1])
             elsets[elset_name] = np.hstack([temp1, temp2])
 
@@ -133,7 +122,7 @@ def parseAbaqusInput(abq_inp_name):
         'densities': densities,
         'elastics': elastics
         }
-    
+
 # ====================================================================
 # Structures of Outputs
 # -------------------------

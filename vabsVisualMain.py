@@ -9,6 +9,7 @@ from abaqusConstants import *
 #from scVisual3D import *
 #from scVisual1D import *
 from utilities import *
+import utilities_abq as uab
 from textRepr import *
 from UcheckDehoVisual import *
 import os.path
@@ -475,7 +476,7 @@ def visualization(vabs_input):
     vp1 = session.viewports[session.currentViewportName]
     vp1.setValues(origin = da_origin, width = da_width / 2.0, height = da_height)
     da_origin = (da_origin[0] + da_width / 2.0, da_origin[1])
-    setViewYZ(vp=vp1, nsg=2, obj=odb)
+    uab.setViewYZ(vp=vp1, nsg=2, obj=odb)
     vp1.odbDisplay.setPrimaryVariable(variableLabel = 'EN', 
                                       outputPosition = ELEMENT_NODAL, 
                                       refinement = (COMPONENT, 'EN11'))
@@ -498,7 +499,7 @@ def visualization(vabs_input):
     
     vp2 = session.Viewport(name = 'Viewport: 2', 
                            origin = da_origin, width = da_width / 2.0, height = da_height)
-    setViewYZ(vp=vp2, nsg=2, obj=odb)
+    uab.setViewYZ(vp=vp2, nsg=2, obj=odb)
     vp2.odbDisplay.setPrimaryVariable(variableLabel = 'SN', 
                                      outputPosition = ELEMENT_NODAL, 
                                      refinement = (COMPONENT, 'SN11'))

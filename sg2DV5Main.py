@@ -9,6 +9,7 @@ from abaqusConstants import *
 from caeModules import *
 #from yZview import *
 from utilities import *
+import utilities_abq as uab
 from textRepr import *
 import regionToolset
 
@@ -39,7 +40,7 @@ def create2DV5SG(profile, fiber_flag, vf_f, interface_flag, t_interface,
                                      t_interface, fiber_matname, matrix_matname, 
                                      interface_matname, mesh_size, elem_type)
     
-    setViewYZ(nsg=2, obj=p, clr='Material')
+    uab.setViewYZ(nsg=2, obj=p, clr='Material')
 
     return 1
     
