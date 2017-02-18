@@ -1,7 +1,7 @@
 from abaqus import *
 from parseAbaqusInput import *
 from reorgAbaqusInput import *
-from writeSCInput import *
+from writeSCinput import *
 import os
 
 def createSCInputMain(

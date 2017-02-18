@@ -11,6 +11,7 @@ from caeModules import *
 from math import *
 #from yZview import *
 from utilities import *
+import utilities_abq as uab
 import regionToolset
 import os
 
@@ -217,7 +218,7 @@ def fastGenerate1D(layup, thickness, model_name, material_name, offset_ratio, el
                                     additionalRotationType=ROTATION_NONE, additionalRotationField='',
                                     axis=AXIS_3, angle=0.0, numIntPoints=3)
         
-    setViewYZ(nsg=1, obj=p)
+    uab.setViewYZ(nsg=1, obj=p)
     
     return 1
     
