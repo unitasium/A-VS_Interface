@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Functions
+# ---------
 # trimIntersectCurves(sketch, curve1_id, keep1, curve2_id, keep2, near_pt)
 # extendIntersectCurves(sketch, curve1_id, curve2_id, near_pt)
 # findEndPoints(sketch, edge_id)

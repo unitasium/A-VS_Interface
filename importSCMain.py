@@ -1,5 +1,6 @@
 # Import VABS/SwiftComp input file into Abaqus and generate a model
 import utilities as utl
+import os
 
 # Parse SC input
 sc_input = r'C:\Users\tian50\Documents\Graduate\A-VS_Interface\Tests\Import_VS\test1.sc'
