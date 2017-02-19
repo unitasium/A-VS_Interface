@@ -52,15 +52,16 @@ ln = ln + nnode
 
 # Parse elements
 # Element connectivities [[e1, n1, n2, n3, n4, ...], ...]
+# 1D elements
 elem_connt_b31_temp=[]
 elem_connt_b31 = []
-
+# 2D elements
 elem_connt_s3 = []
 elem_connt_s6 = []
 elem_connt_s4 = []
 elem_connt_s8 = []
 elem_connt_s9 = []
-
+# 3D elements
 elem_connt_c4  = []
 elem_connt_c10 = []
 elem_connt_c8  = []
