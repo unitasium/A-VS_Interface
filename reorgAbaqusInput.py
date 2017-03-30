@@ -182,6 +182,7 @@ def reorgAbaqusInput(
 
     # ----- Local coordinates ----------------------------------------
     eid_all = np.arange(1, nelem+1).tolist()
+    distr_all = []
     if len(distributions) > 0:
         # Join all distributions
         distr_all = np.zeros((1, 7))

@@ -100,7 +100,7 @@ UwriteMaterials.py	UwriteMaterials.py	1;"	kind:file	line:1
 VABSCaeMainWindow	VABSGUI.py	/^from vabsCaeMainWindow import VABSCaeMainWindow$/;"	kind:namespace	line:10
 VABSCaeMainWindow	vabsCaeMainWindow.py	/^class VABSCaeMainWindow(AFXMainWindow): $/;"	kind:class	line:14
 VABSGUI.py	VABSGUI.py	1;"	kind:file	line:1
-VABSMain	vabsMain.py	/^def VABSMain(recover_flag, gen_inp_only, vabs_inp_name='', abq_inp_name='',$/;"	kind:function	line:13
+VABSMain	vabsMain.py	/^def VABSMain($/;"	kind:function	line:13
 VABSMain	vabsMain2.py	/^def VABSMain(recover_flag, gen_inp_only, vabs_inp_name='', abq_inp_name='',$/;"	kind:function	line:13
 VABSToolsetGui	vabsCaeMainWindow.py	/^from vabsToolsetGui import VABSToolsetGui$/;"	kind:namespace	line:11
 VABSToolsetGui	vabsToolsetGui.py	/^class VABSToolsetGui(AFXToolsetGui):$/;"	kind:class	line:31
@@ -170,10 +170,11 @@ __init__	vabsVisualDB.py	/^    def __init__(self, form, keyword, patterns='*'):$
 __init__	vabsVisualForm.py	/^    def __init__(self, owner):$/;"	kind:member	line:14
 __init__	workplaneV5DB.py	/^    def __init__(self, form):$/;"	kind:member	line:19
 __init__	workplaneV5Form.py	/^    def __init__(self, owner):$/;"	kind:member	line:13
-abaLayupGenerate	sg1DMain.py	/^def abaLayupGenerate(model_name_abq, part_name,layup_abq, element_type):$/;"	kind:function	line:232
-abaSection1D	sg1DMain.py	/^def abaSection1D(model_name = '', part_name = '', section_name = '', offset_ratio = 0.0, element_type = 'five-noded'):$/;"	kind:function	line:331
+abaLayupGenerate	sg1DMain.py	/^def abaLayupGenerate(model_name_abq, part_name,layup_abq, element_type):$/;"	kind:function	line:233
+abaSection1D	sg1DMain.py	/^def abaSection1D(model_name = '', part_name = '', section_name = '', offset_ratio = 0.0, element_type = 'five-noded'):$/;"	kind:function	line:332
 abaqus_input	airfoil_automation/runvabs.py	/^    abaqus_input = ''$/;"	kind:variable	line:135
 abaqus_input	airfoil_automation/runvabs.py	/^    abaqus_input = createAirfoil(project_name, airfoil_main)$/;"	kind:variable	line:132
+abaqus_input	importSCMain.py	/^abaqus_input = r'C:\\Users\\tian50\\Documents\\Graduate\\A-VS_Interface\\Tests\\Import_VS\\test1.inp'$/;"	kind:variable	line:7
 abq_inp	vabsMain2.py	/^abq_inp = sys.argv[1]$/;"	kind:variable	line:293
 activate	layupsDB.py	/^    def activate(self, sender, sel, ptr):$/;"	kind:member	line:236
 activate	node9DB.py	/^    def activate(self, sender, sel, ptr):$/;"	kind:member	line:61
@@ -191,16 +192,19 @@ addLayups	layupsMain.py	/^def addLayups(method,$/;"	kind:function	line:8
 airfoil_main	airfoil_automation/runvabs.py	/^    airfoil_main = airfoil_main + '.xml'$/;"	kind:variable	line:30
 airfoil_main	airfoil_automation/runvabs.py	/^airfoil_main = control.find('airfoil').text$/;"	kind:variable	line:28
 airfoil_main	airfoil_automation/runvabs.py	/^airfoil_main = os.path.join(cwd, airfoil_main)$/;"	kind:variable	line:31
+all_lines	importSCMain.py	/^    all_lines = fin.readlines()$/;"	kind:variable	line:12
+analysis	importSCMain.py	/^    analysis = int(h1[0])$/;"	kind:variable	line:26
 app	SwiftCompGUI.py	/^app = AFXApp(appName = 'ABAQUS\/CAE', $/;"	kind:variable	line:15
 app	VABSGUI.py	/^app = AFXApp(appName = 'ABAQUS\/CAE', $/;"	kind:variable	line:15
-assignLayups	sg2DLaminateMain.py	/^def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):$/;"	kind:function	line:11
+assignLayups	sg2DLaminateMain.py	/^def assignLayups(baseline, area, model_name, section_name, opposite=0, nsp=20):$/;"	kind:function	line:12
 c	airfoil_automation/runvabs.py	/^    c = c.split('\\n')$/;"	kind:variable	line:83
 c	airfoil_automation/runvabs.py	/^    c = foot.find('rotation').text.strip()$/;"	kind:variable	line:82
 call	vabsMain.py	/^from subprocess import call$/;"	kind:namespace	line:4
 call	vabsMain2.py	/^from subprocess import call$/;"	kind:namespace	line:4
 checkDehoVisual	UcheckDehoVisual.py	/^def checkDehoVisual(sc_input_sc, flag):$/;"	kind:function	line:12
 checkMaterials	UwriteMaterials.py	/^def checkMaterials(matDict, analysis, model_name):$/;"	kind:function	line:71
-checkOffsetSide	sg2DLaminateMain.py	/^def checkOffsetSide(sketch, point0, point1, line, distance):$/;"	kind:function	line:634
+checkOffsetSide	sg2DLaminateMain.py	/^def checkOffsetSide(sketch, point0, point1, line, distance):$/;"	kind:function	line:640
+checkOffsetSide2	sg2DLaminateMain.py	/^def checkOffsetSide2(sketch, point0, point1, point2, line, distance):$/;"	kind:function	line:662
 codecs	convert2sc.py	/^import codecs$/;"	kind:namespace	line:5
 codecs	vabsMain.py	/^import codecs$/;"	kind:namespace	line:9
 codecs	vabsMain2.py	/^import codecs$/;"	kind:namespace	line:8
@@ -217,38 +221,41 @@ cos	airfoil_automation/runvabs.py	/^        cos = [float(cos[0]), float(cos[1])]
 cos	airfoil_automation/runvabs.py	/^        cos = control.find('cos').text.split()$/;"	kind:variable	line:51
 count	sg2DLaminateDB.py	/^        count = 0$/;"	kind:variable	line:163
 count	sg2DLaminateEraseDB.py	/^    count = 0$/;"	kind:variable	line:72
-create1DSG	sg1DMain.py	/^def create1DSG(method,$/;"	kind:function	line:17
-create2DV5SG	sg2DV5Main.py	/^def create2DV5SG(profile, fiber_flag, vf_f, interface_flag, t_interface, $/;"	kind:function	line:21
+create1DSG	sg1DMain.py	/^def create1DSG(method,$/;"	kind:function	line:18
+create2DV5SG	sg2DV5Main.py	/^def create2DV5SG(profile, fiber_flag, vf_f, interface_flag, t_interface, $/;"	kind:function	line:22
 create3DV5SG	sg3DV5Main.py	/^def create3DV5SG(profile,fiber_flag,vf_f,interface_flag,t_interface,modelName,fiber_matname,matrix_matname,interface_matname,mesh_size,elem_type):$/;"	kind:function	line:10
 create3DsphericV5	sg3Dparticle_V5.py	/^def create3DsphericV5(model_name , fiber_flag,vf_f,interface_flag,t_interface,fiber_matname,matrix_matname,interface_matname,mesh_size,elem_type):$/;"	kind:function	line:16
 createAirfoil	drawCS.py	/^from sg2DAirfoil import createAirfoil$/;"	kind:namespace	line:3
-createAirfoil	sg2DAirfoil.py	/^def createAirfoil(project_name, control_file):$/;"	kind:function	line:19
-createFirstShell	sg2DAirfoil.py	/^def createFirstShell(model, part, sketch):$/;"	kind:function	line:1484
-createHexInterfaceV5	sg2DV5Main.py	/^def createHexInterfaceV5(model_name, fiber_flag, vf_f, interface_flag, $/;"	kind:function	line:768
-createHexV5	sg2DV5Main.py	/^def createHexV5(model_name , fiber_flag,vf_f, fiber_matname,matrix_matname,mesh_size,elem_type):$/;"	kind:function	line:552
-createPartYZ	sg2DAirfoil.py	/^def createPartYZ(model_name, part_name):$/;"	kind:function	line:1475
-createSCInputMain	createSCInputMain.py	/^def createSCInputMain($/;"	kind:function	line:6
+createAirfoil	sg2DAirfoil.py	/^def createAirfoil(project_name, control_file):$/;"	kind:function	line:20
+createFirstShell	sg2DAirfoil.py	/^def createFirstShell(model, part, sketch):$/;"	kind:function	line:1545
+createHexInterfaceV5	sg2DV5Main.py	/^def createHexInterfaceV5(model_name, fiber_flag, vf_f, interface_flag, $/;"	kind:function	line:769
+createHexV5	sg2DV5Main.py	/^def createHexV5(model_name , fiber_flag,vf_f, fiber_matname,matrix_matname,mesh_size,elem_type):$/;"	kind:function	line:553
+createPartYZ	sg2DAirfoil.py	/^def createPartYZ(model_name, part_name):$/;"	kind:function	line:1536
+createSCInputMain	createSCInputMain.py	/^def createSCInputMain($/;"	kind:function	line:7
 createSCInputMain.py	createSCInputMain.py	1;"	kind:file	line:1
 createSGfromFile	sg2DReadFileMain.py	/^def createSGfromFile(project_name, control_file):$/;"	kind:function	line:6
 createSg	userDataSG.py	/^    def createSg(self, model_source,model_name, part_name,abaqus_input, swiftcomp_filename,$/;"	kind:member	line:16
 createSgDehomoData	userDataSG.py	/^    def createSgDehomoData(self, debug, sgmodel_source, sg_name, sc_input, $/;"	kind:member	line:61
-createSqrInterfaceV5	sg2DV5Main.py	/^def createSqrInterfaceV5(model_name, fiber_flag, vf_f, interface_flag, $/;"	kind:function	line:290
-createSqrV5	sg2DV5Main.py	/^def createSqrV5(model_name , fiber_flag,vf_f, fiber_matname,matrix_matname,mesh_size,elem_type):$/;"	kind:function	line:54
-createVABSInputMain	createVABSInputMain.py	/^def createVABSInputMain($/;"	kind:function	line:6
+createSqrInterfaceV5	sg2DV5Main.py	/^def createSqrInterfaceV5(model_name, fiber_flag, vf_f, interface_flag, $/;"	kind:function	line:291
+createSqrV5	sg2DV5Main.py	/^def createSqrV5(model_name , fiber_flag,vf_f, fiber_matname,matrix_matname,mesh_size,elem_type):$/;"	kind:function	line:55
+createVABSInputMain	createVABSInputMain.py	/^def createVABSInputMain($/;"	kind:function	line:7
 createVABSInputMain.py	createVABSInputMain.py	1;"	kind:file	line:1
 curve_flag	airfoil_automation/runvabs.py	/^curve_flag      = int(head.find('curve').text)$/;"	kind:variable	line:46
-customKernel	sg2DAirfoil.py	/^import customKernel$/;"	kind:namespace	line:10
-customKernel	sg2DLaminateErase.py	/^import customKernel$/;"	kind:namespace	line:6
-customKernel	sg2DLaminateMain.py	/^import customKernel$/;"	kind:namespace	line:9
+customKernel	sg2DAirfoil.py	/^import customKernel$/;"	kind:namespace	line:11
+customKernel	sg2DLaminateErase.py	/^import customKernel$/;"	kind:namespace	line:7
+customKernel	sg2DLaminateMain.py	/^import customKernel$/;"	kind:namespace	line:10
 cwd	airfoil_automation/runvabs.py	/^cwd = os.getcwd()$/;"	kind:variable	line:10
 cwd	airfoil_automation/runvabs.py	/^cwd = os.path.dirname(control_file)  # current working directory$/;"	kind:variable	line:16
 deactivate	sg2DLaminateForm.py	/^    def deactivate(self):$/;"	kind:member	line:59
 debug	utilities.py	/^debug = 0$/;"	kind:variable	line:8
+debug	utilities_abq.py	/^debug = 0$/;"	kind:variable	line:17
+density	importSCMain.py	/^    density = float(mate1[1])$/;"	kind:variable	line:125
 determineNSG	UdetermineNSG.py	/^def determineNSG(model_name, part_name):$/;"	kind:function	line:9
 determineNSG	userDataSG.py	/^from UdetermineNSG import determineNSG$/;"	kind:namespace	line:6
 determineVolume	UdetermineVolume.py	/^def determineVolume(model_name, part_name, macro_model_dimension, nSG):$/;"	kind:function	line:6
 df	airfoil_automation/runvabs.py	/^    df = df.split('\\n')$/;"	kind:variable	line:102
 df	airfoil_automation/runvabs.py	/^    df = foot.find('distributed_force').text.strip()$/;"	kind:variable	line:101
+dimensionality	Tests/part_from_mesh/m2p.py	/^    dimensionality=THREE_D,$/;"	kind:variable	line:46
 dm	airfoil_automation/runvabs.py	/^    dm = dm.split('\\n')$/;"	kind:variable	line:109
 dm	airfoil_automation/runvabs.py	/^    dm = foot.find('distributed_moment').text.strip()$/;"	kind:variable	line:108
 doCustomChecks	layupsForm.py	/^    def doCustomChecks(self):$/;"	kind:member	line:41
@@ -267,28 +274,50 @@ doCustomChecks	vabsForm.py	/^    def doCustomChecks(self):$/;"	kind:member	line:
 doCustomChecks	vabsVisualForm.py	/^    def doCustomChecks(self):$/;"	kind:member	line:35
 doCustomChecks	workplaneV5Form.py	/^    def doCustomChecks(self):$/;"	kind:member	line:34
 drawCS.py	drawCS.py	1;"	kind:file	line:1
-eleFormat	utilities.py	/^def eleFormat(format1, format2):$/;"	kind:function	line:49
+e	Tests/part_from_mesh/m2p.py	/^e = pt.elements$/;"	kind:variable	line:33
+e_types_labels_conns	Tests/part_from_mesh/m2p.py	/^e_types_labels_conns = []$/;"	kind:variable	line:34
+elastic	importSCMain.py	/^        elastic = map(float, all_lines[ln+2].split())$/;"	kind:variable	line:129
+elastic	importSCMain.py	/^        elastic = map(float, all_lines[ln+2].split())$/;"	kind:variable	line:133
+eleFormat	utilities.py	/^def eleFormat(format1, format2):$/;"	kind:function	line:55
+elem	importSCMain.py	/^    elem = all_lines[i].split()$/;"	kind:variable	line:73
+elemShape	Tests/part_from_mesh/m2p.py	/^    elemShape=HEX8$/;"	kind:variable	line:31
+elem_connt	importSCMain.py	/^    elem_connt = [int(n) for n in elem[2:] if n != '0']$/;"	kind:variable	line:80
+elem_connt_b31	importSCMain.py	/^elem_connt_b31 = []$/;"	kind:variable	line:57
+elem_connt_b31_temp	importSCMain.py	/^elem_connt_b31_temp=[]$/;"	kind:variable	line:56
+elem_connt_c10	importSCMain.py	/^elem_connt_c10 = []$/;"	kind:variable	line:66
+elem_connt_c20	importSCMain.py	/^elem_connt_c20 = []$/;"	kind:variable	line:68
+elem_connt_c4	importSCMain.py	/^elem_connt_c4  = []$/;"	kind:variable	line:65
+elem_connt_c8	importSCMain.py	/^elem_connt_c8  = []$/;"	kind:variable	line:67
+elem_connt_s3	importSCMain.py	/^elem_connt_s3 = []$/;"	kind:variable	line:59
+elem_connt_s4	importSCMain.py	/^elem_connt_s4 = []$/;"	kind:variable	line:61
+elem_connt_s6	importSCMain.py	/^elem_connt_s6 = []$/;"	kind:variable	line:60
+elem_connt_s8	importSCMain.py	/^elem_connt_s8 = []$/;"	kind:variable	line:62
+elem_connt_s9	importSCMain.py	/^elem_connt_s9 = []$/;"	kind:variable	line:63
+elem_dim	importSCMain.py	/^    elem_dim = len(elem) - 2$/;"	kind:variable	line:79
+elem_flag	importSCMain.py	/^    elem_flag = int(h1[1])$/;"	kind:variable	line:27
+elem_id	importSCMain.py	/^    elem_id = int(elem[0])$/;"	kind:variable	line:74
 elem_info	node_elem_info.py	/^def elem_info(nSG,line):$/;"	kind:function	line:51
-eraseLayups	sg2DLaminateErase.py	/^def eraseLayups(baseline, model_name):$/;"	kind:function	line:8
+elements	Tests/part_from_mesh/m2p.py	/^    elements=e_types_labels_conns$/;"	kind:variable	line:49
+eraseLayups	sg2DLaminateErase.py	/^def eraseLayups(baseline, model_name):$/;"	kind:function	line:9
 et	airfoil_automation/runvabs.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:1
 et	layupsMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:6
-et	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:15
+et	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:16
 et	sg2DReadFileMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:3
 etree	airfoil_automation/runvabs.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:1
 etree	layupsMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:6
-etree	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:15
+etree	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:16
 etree	sg2DReadFileMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:3
-extendIntersectCurves	utilities.py	/^def extendIntersectCurves(sketch, curve1_id, curve2_id, near_pt):$/;"	kind:function	line:101
+extendIntersectCurves	utilities_abq.py	/^def extendIntersectCurves(sketch, curve1_id, curve2_id, near_pt):$/;"	kind:function	line:51
 f	getcwd.py	/^f = open('temp.txt', 'w')$/;"	kind:variable	line:5
 fastGenerate	layupsMain.py	/^def fastGenerate(model_name, material_name, section_name, layup, ply_thickness):$/;"	kind:function	line:21
-fastGenerate1D	sg1DMain.py	/^def fastGenerate1D(layup, thickness, model_name, material_name, offset_ratio, element_type):$/;"	kind:function	line:73
-findEndPoints	utilities.py	/^def findEndPoints(sketch, edge_id):$/;"	kind:function	line:117
-findTwoPointsDistance	utilities.py	/^def findTwoPointsDistance(point1, point2):$/;"	kind:function	line:126
+fastGenerate1D	sg1DMain.py	/^def fastGenerate1D(layup, thickness, model_name, material_name, offset_ratio, element_type):$/;"	kind:function	line:74
+findEndPoints	utilities_abq.py	/^def findEndPoints(sketch, edge_id):$/;"	kind:function	line:67
+findTwoPointsDistance	utilities_abq.py	/^def findTwoPointsDistance(point1, point2):$/;"	kind:function	line:76
 foot	airfoil_automation/runvabs.py	/^    foot = et.parse(foot_file).getroot()$/;"	kind:variable	line:74
 foot_file	airfoil_automation/runvabs.py	/^        foot_file = foot_file + '.xml'$/;"	kind:variable	line:35
 foot_file	airfoil_automation/runvabs.py	/^    foot_file = control.find('foot').text$/;"	kind:variable	line:33
 foot_file	airfoil_automation/runvabs.py	/^    foot_file = os.path.join(cwd, foot_file)$/;"	kind:variable	line:36
-fromInputfile1D	sg1DMain.py	/^def fromInputfile1D(file_layup_input, model_name, element_type):$/;"	kind:function	line:454
+fromInputfile1D	sg1DMain.py	/^def fromInputfile1D(file_layup_input, model_name, element_type):$/;"	kind:function	line:455
 gamma	airfoil_automation/runvabs.py	/^    gamma = [[float(gamma),],]$/;"	kind:variable	line:116
 gamma	airfoil_automation/runvabs.py	/^    gamma = foot.find('axial_strain').text.strip()$/;"	kind:variable	line:115
 generateInputFromCAE	scGenInput.py	/^def generateInputFromCAE(model_source, macro_model_dimension, analysis, elem_flag, trans_flag,$/;"	kind:function	line:23
@@ -315,10 +344,13 @@ getKernelInitializationCommand	scToolsetGui.py	/^    def getKernelInitialization
 getKernelInitializationCommand	vabsToolsetGui.py	/^    def getKernelInitializationCommand(self):$/;"	kind:member	line:164
 getNextStep	sg2DLaminateDB.py	/^        def getNextStep(self, previousStep):$/;"	kind:member	line:188
 getNextStep	sg2DLaminateEraseDB.py	/^    def getNextStep(self, previousStep):$/;"	kind:member	line:97
-getRecoverInput	vabsMain.py	/^def getRecoverInput($/;"	kind:function	line:418
+getRecoverInput	vabsMain.py	/^def getRecoverInput($/;"	kind:function	line:59
 getVABSInput	vabsMain2.py	/^def getVABSInput(vabs_inp_name, abq_inp_name, timoshenko_flag, thermal_flag,$/;"	kind:function	line:45
 getcwd.py	getcwd.py	1;"	kind:file	line:1
+h1	importSCMain.py	/^    h1 = head[0].split()$/;"	kind:variable	line:24
+h2	importSCMain.py	/^    h2 = head[1].split()$/;"	kind:variable	line:25
 head	airfoil_automation/runvabs.py	/^head            = et.parse(head_file).getroot()$/;"	kind:variable	line:42
+head	importSCMain.py	/^    head = all_lines[:2]$/;"	kind:variable	line:23
 head_file	airfoil_automation/runvabs.py	/^    head_file = head_file + '.xml'$/;"	kind:variable	line:26
 head_file	airfoil_automation/runvabs.py	/^head_file    = control.find('head').text$/;"	kind:variable	line:24
 head_file	airfoil_automation/runvabs.py	/^head_file    = os.path.join(cwd, head_file)$/;"	kind:variable	line:27
@@ -333,8 +365,10 @@ hide	sg2DLaminateDB.py	/^    def hide(self):$/;"	kind:member	line:118
 hide	sg2DLaminateEraseDB.py	/^    def hide(self):$/;"	kind:member	line:58
 hide	workplaneV5DB.py	/^    def hide(self):$/;"	kind:member	line:111
 homogenization	scHomoMain.py	/^def homogenization($/;"	kind:function	line:14
+importSCMain.py	importSCMain.py	1;"	kind:file	line:1
 importSCmat	scMacroMat.py	/^def importSCmat($/;"	kind:function	line:15
 info	utilities.py	/^info  = 1$/;"	kind:variable	line:7
+info	utilities_abq.py	/^info  = 1$/;"	kind:variable	line:16
 inpParser	parseAbaqusInput.py	/^import inpParser$/;"	kind:namespace	line:3
 input_only	airfoil_automation/runvabs.py	/^input_only   = int(control.find('input_only').text)$/;"	kind:variable	line:39
 k	airfoil_automation/runvabs.py	/^    k = [0.0, 0.0, 0.0]$/;"	kind:variable	line:63
@@ -350,11 +384,29 @@ layupsDB	layupsForm.py	/^        import layupsDB$/;"	kind:namespace	line:37
 layupsDB.py	layupsDB.py	1;"	kind:file	line:1
 layupsForm.py	layupsForm.py	1;"	kind:file	line:1
 layupsMain.py	layupsMain.py	1;"	kind:file	line:1
+ln	importSCMain.py	/^        ln = ln + 3$/;"	kind:variable	line:130
+ln	importSCMain.py	/^        ln = ln + 5$/;"	kind:variable	line:136
+ln	importSCMain.py	/^        ln = ln + 8$/;"	kind:variable	line:139
+ln	importSCMain.py	/^    ln = 2$/;"	kind:variable	line:36
+ln	importSCMain.py	/^    ln = ln + nelem$/;"	kind:variable	line:105
+ln	importSCMain.py	/^    ln = ln + nlayer$/;"	kind:variable	line:110
+ln	importSCMain.py	/^ln = 0  # Line number$/;"	kind:variable	line:16
+ln	importSCMain.py	/^ln = ln + nelem$/;"	kind:variable	line:101
+ln	importSCMain.py	/^ln = ln + nnode$/;"	kind:variable	line:51
 localization	scLocalMain.py	/^def localization($/;"	kind:function	line:15
+m	Tests/part_from_mesh/m2p.py	/^m = mdb.Model(name='Model-1')$/;"	kind:variable	line:5
+m2p.py	Tests/part_from_mesh/m2p.py	1;"	kind:file	line:1
+macro_dim	importSCMain.py	/^macro_dim = 3$/;"	kind:variable	line:9
 majorNumber	SwiftCompGUI.py	/^             majorNumber = 6, $/;"	kind:variable	line:18
 majorNumber	VABSGUI.py	/^             majorNumber = 6, $/;"	kind:variable	line:18
-math	sg2DAirfoil.py	/^import math$/;"	kind:namespace	line:14
+mate	importSCMain.py	/^    mate = all_lines[ln].split()$/;"	kind:variable	line:120
+mate1	importSCMain.py	/^    mate1 = all_lines[ln+1].split()$/;"	kind:variable	line:124
+mate_id	importSCMain.py	/^    mate_id = int(mate[0])$/;"	kind:variable	line:121
+mate_type	importSCMain.py	/^    mate_type = int(mate[1])$/;"	kind:variable	line:123
+materials	importSCMain.py	/^materials = {}$/;"	kind:variable	line:114
+math	sg2DAirfoil.py	/^import math$/;"	kind:namespace	line:15
 math	utilities.py	/^import math$/;"	kind:namespace	line:5
+math	utilities_abq.py	/^import math$/;"	kind:namespace	line:14
 math	writeVABSInput.py	/^import math$/;"	kind:namespace	line:2
 mdb	layupsDB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
 mdb	node9DB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
@@ -371,18 +423,32 @@ minorNumber	VABSGUI.py	/^             minorNumber = 16, $/;"	kind:variable	line:
 model_recover	airfoil_automation/runvabs.py	/^        model_recover = timoshenko_flag$/;"	kind:variable	line:70
 model_recover	airfoil_automation/runvabs.py	/^        model_recover = vlasov_flag$/;"	kind:variable	line:72
 model_recover	airfoil_automation/runvabs.py	/^model_recover = ''$/;"	kind:variable	line:65
+n	Tests/part_from_mesh/m2p.py	/^n = pt.nodes$/;"	kind:variable	line:21
+n_labels_coords	Tests/part_from_mesh/m2p.py	/^n_labels_coords = []$/;"	kind:variable	line:22
+name	Tests/part_from_mesh/m2p.py	/^    name='Part-1',$/;"	kind:variable	line:45
+nelem	importSCMain.py	/^    nelem = int(h2[2])$/;"	kind:variable	line:32
+nlayer	importSCMain.py	/^    nlayer = int(h2[5])$/;"	kind:variable	line:35
+nmate	importSCMain.py	/^    nmate = int(h2[3])$/;"	kind:variable	line:33
+nnode	importSCMain.py	/^    nnode = int(h2[1])$/;"	kind:variable	line:31
+nodal_coordinates	Tests/part_from_mesh/m2p.py	/^nodal_coordinates = [$/;"	kind:variable	line:8
+node	importSCMain.py	/^        node = all_lines[i].split()$/;"	kind:variable	line:46
 node9.py	node9.py	1;"	kind:file	line:1
 node9DB	node9Form.py	/^        import node9DB$/;"	kind:namespace	line:28
 node9DB.py	node9DB.py	1;"	kind:file	line:1
 node9Form.py	node9Form.py	1;"	kind:file	line:1
+node_coord	importSCMain.py	/^node_coord = []  # Nodal coordinates      [[n1, x1, x2, x3], ...]$/;"	kind:variable	line:39
 node_elem_info.py	node_elem_info.py	1;"	kind:file	line:1
 node_info	node_elem_info.py	/^def node_info(nSG,line,unit_change_ratio=1.0,Xs=(0.0,0.0,0.0)):$/;"	kind:function	line:8
+nodes	Tests/part_from_mesh/m2p.py	/^    nodes=(n[0], n[1], n[2], n[3], n[4], n[5], n[6], n[7]),$/;"	kind:variable	line:30
+nodes	Tests/part_from_mesh/m2p.py	/^    nodes=n_labels_coords,$/;"	kind:variable	line:48
 np	node9.py	/^import numpy as np$/;"	kind:namespace	line:4
 np	parseAbaqusInput.py	/^import numpy as np$/;"	kind:namespace	line:2
 np	reorgAbaqusInput.py	/^import numpy as np$/;"	kind:namespace	line:1
-np	sg2DLaminateMain.py	/^import numpy as np$/;"	kind:namespace	line:7
+np	sg2DLaminateMain.py	/^import numpy as np$/;"	kind:namespace	line:8
 np	writeSCinput.py	/^import numpy as np$/;"	kind:namespace	line:2
 np	writeVABSInput.py	/^import numpy as np$/;"	kind:namespace	line:3
+nsg	importSCMain.py	/^    nsg = int(h2[0])$/;"	kind:variable	line:30
+nslave	importSCMain.py	/^    nslave = int(h2[4])$/;"	kind:variable	line:34
 oblique_flag	airfoil_automation/runvabs.py	/^    oblique_flag = 0$/;"	kind:variable	line:57
 oblique_flag	airfoil_automation/runvabs.py	/^    oblique_flag = int(head.find('oblique').text)$/;"	kind:variable	line:49
 okToCancel	layupsForm.py	/^    def okToCancel(self):$/;"	kind:member	line:55
@@ -417,13 +483,15 @@ os	UcheckDehoVisual.py	/^import os$/;"	kind:namespace	line:9
 os	Usgmodel_info.py	/^import os$/;"	kind:namespace	line:6
 os	airfoil_automation/runvabs.py	/^import os$/;"	kind:namespace	line:3
 os	convert2sc.py	/^import os.path$/;"	kind:namespace	line:7
-os	createSCInputMain.py	/^import os$/;"	kind:namespace	line:4
-os	createVABSInputMain.py	/^import os$/;"	kind:namespace	line:4
+os	createSCInputMain.py	/^import os$/;"	kind:namespace	line:5
+os	createVABSInputMain.py	/^import os$/;"	kind:namespace	line:5
 os	getcwd.py	/^import os$/;"	kind:namespace	line:1
+os	importSCMain.py	/^import os$/;"	kind:namespace	line:3
 os	layupsDB.py	/^import os$/;"	kind:namespace	line:4
 os	layupsForm.py	/^import osutils, os$/;"	kind:namespace	line:3
 os	node9DB.py	/^import os$/;"	kind:namespace	line:4
 os	node9Form.py	/^import osutils, os$/;"	kind:namespace	line:3
+os	reorgAbaqusInput.py	/^import os$/;"	kind:namespace	line:2
 os	sG1D_v3DB.py	/^import os$/;"	kind:namespace	line:4
 os	sG1D_v3Form.py	/^import osutils, os$/;"	kind:namespace	line:3
 os	sG2DV5DB.py	/^import os$/;"	kind:namespace	line:4
@@ -440,9 +508,9 @@ os	scMacroMat.py	/^import os$/;"	kind:namespace	line:6
 os	scToolsetGui.py	/^import os$/;"	kind:namespace	line:24
 os	scVisualDB.py	/^import os$/;"	kind:namespace	line:4
 os	scVisualForm.py	/^import osutils, os$/;"	kind:namespace	line:3
-os	scVisualMain.py	/^import os.path$/;"	kind:namespace	line:14
-os	sg1DMain.py	/^import os$/;"	kind:namespace	line:15
-os	sg2DAirfoil.py	/^import os$/;"	kind:namespace	line:13
+os	scVisualMain.py	/^import os.path$/;"	kind:namespace	line:15
+os	sg1DMain.py	/^import os$/;"	kind:namespace	line:16
+os	sg2DAirfoil.py	/^import os$/;"	kind:namespace	line:14
 os	sg2DLaminateDB.py	/^import os$/;"	kind:namespace	line:4
 os	sg2DLaminateEraseDB.py	/^import os$/;"	kind:namespace	line:4
 os	sg2DLaminateEraseForm.py	/^import osutils, os$/;"	kind:namespace	line:3
@@ -457,7 +525,7 @@ os	vabsMain2.py	/^import os.path$/;"	kind:namespace	line:7
 os	vabsToolsetGui.py	/^import os$/;"	kind:namespace	line:25
 os	vabsVisualDB.py	/^import os$/;"	kind:namespace	line:4
 os	vabsVisualForm.py	/^import osutils, os$/;"	kind:namespace	line:3
-os	vabsVisualMain.py	/^import os.path$/;"	kind:namespace	line:14
+os	vabsVisualMain.py	/^import os.path$/;"	kind:namespace	line:15
 os	workplaneV5DB.py	/^import os$/;"	kind:namespace	line:4
 os	workplaneV5Form.py	/^import osutils, os$/;"	kind:namespace	line:3
 osutils	layupsForm.py	/^import osutils, os$/;"	kind:namespace	line:3
@@ -470,14 +538,16 @@ osutils	sg2DReadFileForm.py	/^import osutils, os$/;"	kind:namespace	line:3
 osutils	vabsForm.py	/^import osutils, os$/;"	kind:namespace	line:5
 osutils	vabsVisualForm.py	/^import osutils, os$/;"	kind:namespace	line:3
 osutils	workplaneV5Form.py	/^import osutils, os$/;"	kind:namespace	line:3
+p	Tests/part_from_mesh/m2p.py	/^p = m.PartFromNodesAndElements($/;"	kind:variable	line:44
 parseAbaqusInput	parseAbaqusInput.py	/^def parseAbaqusInput(abq_inp_name):$/;"	kind:function	line:5
 parseAbaqusInput.py	parseAbaqusInput.py	1;"	kind:file	line:1
-partitionPart	sg2DAirfoil.py	/^def partitionPart(model, part, sketch):$/;"	kind:function	line:1497
+part_name	importSCMain.py	/^part_name = 'test1'$/;"	kind:variable	line:8
+partitionPart	sg2DAirfoil.py	/^def partitionPart(model, part, sketch):$/;"	kind:function	line:1558
 path	convert2sc.py	/^import os.path$/;"	kind:namespace	line:7
-path	scVisualMain.py	/^import os.path$/;"	kind:namespace	line:14
+path	scVisualMain.py	/^import os.path$/;"	kind:namespace	line:15
 path	vabsMain.py	/^import os.path$/;"	kind:namespace	line:7
 path	vabsMain2.py	/^import os.path$/;"	kind:namespace	line:7
-path	vabsVisualMain.py	/^import os.path$/;"	kind:namespace	line:14
+path	vabsVisualMain.py	/^import os.path$/;"	kind:namespace	line:15
 prerelease	SwiftCompGUI.py	/^             prerelease = False)$/;"	kind:variable	line:21
 prerelease	VABSGUI.py	/^             prerelease = False)$/;"	kind:variable	line:21
 processUpdates	layupsDB.py	/^    def processUpdates(self):$/;"	kind:member	line:157
@@ -493,6 +563,7 @@ productName	VABSGUI.py	/^             productName = 'Abaqus-VABS GUI', $/;"	kind
 project_name	airfoil_automation/runvabs.py	/^        project_name = project_name + '.dat'$/;"	kind:variable	line:137
 project_name	airfoil_automation/runvabs.py	/^project_name = control.find('name').text$/;"	kind:variable	line:18
 project_name	drawCS.py	/^project_name = sys.argv[-2]$/;"	kind:variable	line:6
+pt	Tests/part_from_mesh/m2p.py	/^pt = m.Part(name='Temp', dimensionality=THREE_D, type=DEFORMABLE_BODY)$/;"	kind:variable	line:6
 re	workplaneV5DB.py	/^import re$/;"	kind:namespace	line:5
 readAbaqusInput	readAbaqusInput.py	/^def readAbaqusInput(abq_inp_name):$/;"	kind:function	line:1
 readAbaqusInput.py	readAbaqusInput.py	1;"	kind:file	line:1
@@ -501,12 +572,12 @@ readMaterialFile	layupsMain.py	/^def readMaterialFile(model_name, file_name):$/;
 recover_flag	airfoil_automation/runvabs.py	/^recover_flag    = int(head.find('recover').text) + 1$/;"	kind:variable	line:44
 recover_name	airfoil_automation/runvabs.py	/^    recover_name = control.find('recover_name').text$/;"	kind:variable	line:21
 recover_name	airfoil_automation/runvabs.py	/^recover_name = ''$/;"	kind:variable	line:19
-refreshSets	utilities.py	/^def refreshSets(mdb, model_name, part_name, set_fpt):$/;"	kind:function	line:134
-regionToolset	sg1DMain.py	/^import regionToolset$/;"	kind:namespace	line:14
-regionToolset	sg2DV5Main.py	/^import regionToolset$/;"	kind:namespace	line:13
+refreshSets	utilities_abq.py	/^def refreshSets(mdb, model_name, part_name, set_fpt):$/;"	kind:function	line:84
+regionToolset	sg1DMain.py	/^import regionToolset$/;"	kind:namespace	line:15
+regionToolset	sg2DV5Main.py	/^import regionToolset$/;"	kind:namespace	line:14
 regionToolset	sg3DV5Main.py	/^import regionToolset$/;"	kind:namespace	line:6
 regionToolset	workplaneMain.py	/^import regionToolset$/;"	kind:namespace	line:5
-reorgAbaqusInput	reorgAbaqusInput.py	/^def reorgAbaqusInput($/;"	kind:function	line:3
+reorgAbaqusInput	reorgAbaqusInput.py	/^def reorgAbaqusInput($/;"	kind:function	line:4
 reorgAbaqusInput.py	reorgAbaqusInput.py	1;"	kind:file	line:1
 runvabs.py	airfoil_automation/runvabs.py	1;"	kind:file	line:1
 sG1D_v3DB	sG1D_v3Form.py	/^        import sG1D_v3DB$/;"	kind:namespace	line:50
@@ -541,7 +612,10 @@ scVisualDB	scVisualForm.py	/^import scVisualDB$/;"	kind:namespace	line:4
 scVisualDB.py	scVisualDB.py	1;"	kind:file	line:1
 scVisualForm.py	scVisualForm.py	1;"	kind:file	line:1
 scVisualMain.py	scVisualMain.py	1;"	kind:file	line:1
+sc_input	importSCMain.py	/^sc_input = r'C:\\Users\\tian50\\Documents\\Graduate\\A-VS_Interface\\Tests\\Import_VS\\test1.sc'$/;"	kind:variable	line:6
 section	layupsMain.py	/^import section$/;"	kind:namespace	line:5
+section_id	importSCMain.py	/^    section_id = int(elem[1])$/;"	kind:variable	line:75
+sections	importSCMain.py	/^sections = {}$/;"	kind:variable	line:70
 session	layupsDB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
 session	node9DB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
 session	sG1D_v3DB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
@@ -552,8 +626,8 @@ session	sg2DReadFileDB.py	/^from kernelAccess import mdb, session$/;"	kind:names
 session	vabsDB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
 session	vabsVisualDB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
 session	workplaneV5DB.py	/^from kernelAccess import mdb, session$/;"	kind:namespace	line:3
-setSketchPlane	workplaneMain.py	/^def setSketchPlane(nsg, part_name, model_name): $/;"	kind:function	line:8
-setViewYZ	utilities.py	/^def setViewYZ(vp=None, nsg=3, obj=None, clr=None):$/;"	kind:function	line:147
+setSketchPlane	workplaneMain.py	/^def setSketchPlane(nsg, part_name, model_name): $/;"	kind:function	line:9
+setViewYZ	utilities_abq.py	/^def setViewYZ(vp=None, nsg=3, obj=None, clr=None):$/;"	kind:function	line:97
 setYZview	scToolsetGui.py	/^    def setYZview(self, sender, sel, ptr):$/;"	kind:member	line:172
 setYZview	vabsToolsetGui.py	/^    def setYZview(self, sender, sel, ptr):$/;"	kind:member	line:175
 sf	airfoil_automation/runvabs.py	/^    sf = [sf,]$/;"	kind:variable	line:93
@@ -595,15 +669,16 @@ sm	airfoil_automation/runvabs.py	/^    sm = foot.find('sectional_moment').text.s
 sm	airfoil_automation/runvabs.py	/^    sm = sm.split()$/;"	kind:variable	line:96
 st	vabsMain2.py	/^st = datetime.now()$/;"	kind:variable	line:294
 st	vabsMain2.py	/^st = datetime.now()$/;"	kind:variable	line:303
-strFormat	utilities.py	/^def strFormat(format):$/;"	kind:function	line:25
+strFormat	utilities.py	/^def strFormat(format):$/;"	kind:function	line:31
 sys	SwiftCompGUI.py	/^import sys$/;"	kind:namespace	line:9
 sys	UcheckDehoVisual.py	/^import sys$/;"	kind:namespace	line:10
 sys	VABSGUI.py	/^import sys$/;"	kind:namespace	line:9
 sys	airfoil_automation/runvabs.py	/^import sys$/;"	kind:namespace	line:2
 sys	drawCS.py	/^import sys$/;"	kind:namespace	line:4
 sys	parseAbaqusInput.py	/^import sys$/;"	kind:namespace	line:1
-sys	sg2DAirfoil.py	/^import sys$/;"	kind:namespace	line:11
+sys	sg2DAirfoil.py	/^import sys$/;"	kind:namespace	line:12
 sys	vabsMain2.py	/^import sys$/;"	kind:namespace	line:10
+temp_flag	importSCMain.py	/^    temp_flag = int(h1[3])$/;"	kind:variable	line:29
 thermal_flag	airfoil_automation/runvabs.py	/^thermal_flag    = int(head.find('thermal').text)$/;"	kind:variable	line:45
 thisDir	layupsDB.py	/^thisDir = os.path.dirname(thisPath)$/;"	kind:variable	line:7
 thisDir	node9DB.py	/^thisDir = os.path.dirname(thisPath)$/;"	kind:variable	line:7
@@ -650,16 +725,26 @@ time	scGen1DInput_aba.py	/^import time$/;"	kind:namespace	line:19
 time	scHomoMain.py	/^import time$/;"	kind:namespace	line:10
 time	scLocalMain.py	/^import time$/;"	kind:namespace	line:8
 time	scMacroMat.py	/^import time$/;"	kind:namespace	line:7
-time	sg2DAirfoil.py	/^import time$/;"	kind:namespace	line:12
+time	sg2DAirfoil.py	/^import time$/;"	kind:namespace	line:13
 time	vabsMain.py	/^import time$/;"	kind:namespace	line:10
 time	vabsMain2.py	/^import time$/;"	kind:namespace	line:9
 timoshenko_flag	airfoil_automation/runvabs.py	/^timoshenko_flag = int(head.find('timoshenko').text)$/;"	kind:variable	line:43
 tr	userDataSG.py	/^import textRepr as tr$/;"	kind:namespace	line:7
+trans_flag	importSCMain.py	/^    trans_flag = int(h1[2])$/;"	kind:variable	line:28
 trapeze_flag	airfoil_automation/runvabs.py	/^trapeze_flag = int(head.find('trapeze').text)$/;"	kind:variable	line:58
-trimIntersectCurves	utilities.py	/^def trimIntersectCurves(sketch, curve1_id, keep1, curve2_id, keep2, near_pt):$/;"	kind:function	line:69
+trimIntersectCurves	utilities_abq.py	/^def trimIntersectCurves(sketch, curve1_id, keep1, curve2_id, keep2, near_pt):$/;"	kind:function	line:19
+type	Tests/part_from_mesh/m2p.py	/^    type=DEFORMABLE_BODY,$/;"	kind:variable	line:47
 u	airfoil_automation/runvabs.py	/^    u = [u,]$/;"	kind:variable	line:80
 u	airfoil_automation/runvabs.py	/^    u = foot.find('displacement').text.strip()$/;"	kind:variable	line:76
 u	airfoil_automation/runvabs.py	/^    u = u.split()$/;"	kind:variable	line:77
+uab	scVisualMain.py	/^import utilities_abq as uab$/;"	kind:namespace	line:12
+uab	sg1DMain.py	/^import utilities_abq as uab$/;"	kind:namespace	line:14
+uab	sg2DAirfoil.py	/^import utilities_abq as uab$/;"	kind:namespace	line:10
+uab	sg2DLaminateErase.py	/^import utilities_abq as uab$/;"	kind:namespace	line:6
+uab	sg2DLaminateMain.py	/^import utilities_abq as uab$/;"	kind:namespace	line:7
+uab	sg2DV5Main.py	/^import utilities_abq as uab$/;"	kind:namespace	line:12
+uab	vabsVisualMain.py	/^import utilities_abq as uab$/;"	kind:namespace	line:12
+uab	workplaneMain.py	/^import utilities_abq as uab$/;"	kind:namespace	line:7
 updateComboBox_1Materials	layupsDB.py	/^    def updateComboBox_1Materials(self):$/;"	kind:member	line:171
 updateComboBox_1Materials	sG1D_v3DB.py	/^    def updateComboBox_1Materials(self):$/;"	kind:member	line:252
 updateComboBox_1Parts	scHomoDB.py	/^    def updateComboBox_1Parts(self):$/;"	kind:member	line:388
@@ -677,6 +762,8 @@ updateNumber	SwiftCompGUI.py	/^             updateNumber = 0, $/;"	kind:variable
 updateNumber	VABSGUI.py	/^             updateNumber = 0, $/;"	kind:variable	line:20
 userDataSG.py	userDataSG.py	1;"	kind:file	line:1
 utilities.py	utilities.py	1;"	kind:file	line:1
+utilities_abq.py	utilities_abq.py	1;"	kind:file	line:1
+utl	importSCMain.py	/^import utilities as utl$/;"	kind:namespace	line:2
 vabsCaeMainWindow.py	vabsCaeMainWindow.py	1;"	kind:file	line:1
 vabsDB	vabsForm.py	/^        import vabsDB$/;"	kind:namespace	line:139
 vabsDB.py	vabsDB.py	1;"	kind:file	line:1
@@ -692,19 +779,19 @@ vabs_inp_name2	airfoil_automation/runvabs.py	/^    vabs_inp_name2 = ''$/;"	kind:
 vabs_inp_name2	airfoil_automation/runvabs.py	/^    vabs_inp_name2 = os.path.join(cwd, project_name)$/;"	kind:variable	line:138
 vendorName	SwiftCompGUI.py	/^             vendorName = 'SIMULIA', $/;"	kind:variable	line:16
 vendorName	VABSGUI.py	/^             vendorName = 'SIMULIA', $/;"	kind:variable	line:16
-visualization	scVisualMain.py	/^def visualization(macro_model, ap_flag, sc_input):$/;"	kind:function	line:22
-visualization	vabsVisualMain.py	/^def visualization(vabs_input):$/;"	kind:function	line:22
-visualization1D	scVisualMain.py	/^def visualization1D(odb_vis, project_name, node_coord, elem_connt_b31, $/;"	kind:function	line:433
-visualization2D	scVisualMain.py	/^def visualization2D(odb_vis, project_name, node_coord, elem_connt_s3, elem_connt_s6, $/;"	kind:function	line:597
-visualization2D	vabsVisualMain.py	/^def visualization2D($/;"	kind:function	line:521
-visualization3D	scVisualMain.py	/^def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt_c10, $/;"	kind:function	line:848
+visualization	scVisualMain.py	/^def visualization(macro_model, ap_flag, sc_input):$/;"	kind:function	line:23
+visualization	vabsVisualMain.py	/^def visualization(vabs_input):$/;"	kind:function	line:23
+visualization1D	scVisualMain.py	/^def visualization1D(odb_vis, project_name, node_coord, elem_connt_b31, $/;"	kind:function	line:439
+visualization2D	scVisualMain.py	/^def visualization2D(odb_vis, project_name, node_coord, elem_connt_s3, elem_connt_s6, $/;"	kind:function	line:603
+visualization2D	vabsVisualMain.py	/^def visualization2D($/;"	kind:function	line:522
+visualization3D	scVisualMain.py	/^def visualization3D(odb_vis, project_name, node_coord, elem_connt_c4, elem_connt_c10, $/;"	kind:function	line:854
 vlasov_flag	airfoil_automation/runvabs.py	/^    vlasov_flag = 0$/;"	kind:variable	line:48
 vlasov_flag	airfoil_automation/runvabs.py	/^    vlasov_flag = int(head.find('vlasov').text)$/;"	kind:variable	line:56
 workplaneMain.py	workplaneMain.py	1;"	kind:file	line:1
 workplaneV5DB	workplaneV5Form.py	/^        import workplaneV5DB$/;"	kind:namespace	line:30
 workplaneV5DB.py	workplaneV5DB.py	1;"	kind:file	line:1
 workplaneV5Form.py	workplaneV5Form.py	1;"	kind:file	line:1
-writeFormat	utilities.py	/^def writeFormat(file, format, content):$/;"	kind:function	line:11
+writeFormat	utilities.py	/^def writeFormat(file, format, content, delimiter=''):$/;"	kind:function	line:11
 writeMaterials	UwriteMaterials.py	/^def writeMaterials(matDict, analysis, model_name, file):$/;"	kind:function	line:9
 writeMaterials	writeMaterials.py	/^def writeMaterials(matDict, analysis, model_name, file):$/;"	kind:function	line:5
 writeMaterials.py	writeMaterials.py	1;"	kind:file	line:1
@@ -714,5 +801,5 @@ writeVABSInput	writeVABSInput.py	/^def writeVABSInput($/;"	kind:function	line:7
 writeVABSInput.py	writeVABSInput.py	1;"	kind:file	line:1
 xml	airfoil_automation/runvabs.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:1
 xml	layupsMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:6
-xml	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:15
+xml	sg2DAirfoil.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:16
 xml	sg2DReadFileMain.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:3

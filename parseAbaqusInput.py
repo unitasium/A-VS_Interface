@@ -28,7 +28,7 @@ def parseAbaqusInput(abq_inp_name):
     elsets_raw = []
     distributions = []
     orientations = []
-    solidsections = []
+    sections = []
     materials = []
     densities = []
     elastics = []
@@ -81,7 +81,7 @@ def parseAbaqusInput(abq_inp_name):
             lid += 1
             lname = kw.parameter['elset']
             lyt_name2id[lname] = lid
-            solidsections.append(kw)
+            sections.append(kw)
         elif kw.name == 'material':
             mid += 1
             mname = kw.parameter['name']
@@ -115,7 +115,7 @@ def parseAbaqusInput(abq_inp_name):
         'elements 2d': e_connt_2d,
         'elements 3d': e_connt_3d,
         'element sets': elsets,
-        'sections': solidsections,
+        'sections': sections,
         'distribution': distributions,
         'orientation': orientations,
         'materials': materials,
@@ -140,7 +140,7 @@ def parseAbaqusInput(abq_inp_name):
 #          'name2':array([e21, e22, e23, ...]),
 #          ...
 #         }
-# 
+#
 # ====================================================================
 
 # abq_inp = r'airfoil_automation\test_1102.inp'
