@@ -5,10 +5,14 @@ from abaqusConstants import *
 import section
 import xml.etree.ElementTree as et
 
-def addLayups(method,
-              fg_model_name = '', fg_material_name = '', fg_section_name = '', fg_layup = '', fg_ply_thickness = 0.0, 
-              rf_model_name = '', rf_section_name = '', rf_material_file = '', rf_layup_file = ''):
-    
+def addLayups(
+    method,
+    fg_model_name = '', fg_material_name = '', fg_section_name = '',
+    fg_layup = '', fg_ply_thickness = 0.0,
+    rf_model_name = '', rf_section_name = '', rf_material_file = '',
+    rf_layup_file = ''
+):
+
     if method == 1:
         fastGenerate(fg_model_name, fg_material_name, fg_section_name, fg_layup, fg_ply_thickness)
     elif method == 2:
@@ -16,9 +20,9 @@ def addLayups(method,
             mid_name = readMaterialFile(rf_model_name, rf_material_file)
         if rf_layup_file != '':
             readLayupFile(rf_model_name, rf_layup_file, mid_name)
-        
+
     return 1
-    
+
 
 def fastGenerate(model_name, material_name, section_name, layup, ply_thickness):
 
