@@ -12,8 +12,10 @@ def addLayups(method,
     if method == 1:
         fastGenerate(fg_model_name, fg_material_name, fg_section_name, fg_layup, fg_ply_thickness)
     elif method == 2:
-        mid_name = readMaterialFile(rf_model_name, rf_material_file)
-        readLayupFile(rf_model_name, rf_layup_file, mid_name)
+        if rf_material_file != '':
+            mid_name = readMaterialFile(rf_model_name, rf_material_file)
+        if rf_layup_file != '':
+            readLayupFile(rf_model_name, rf_layup_file, mid_name)
         
     return 1
     
