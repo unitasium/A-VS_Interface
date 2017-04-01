@@ -4,6 +4,8 @@ from abaqus import *
 from abaqusConstants import *
 import section
 import xml.etree.ElementTree as et
+import rwData
+import abqObjects
 
 def addLayups(
     method,
@@ -17,7 +19,13 @@ def addLayups(
         fastGenerate(fg_model_name, fg_material_name, fg_section_name, fg_layup, fg_ply_thickness)
     elif method == 2:
         if rf_material_file != '':
-            mid_name = readMaterialFile(rf_model_name, rf_material_file)
+            # mid_name = readMaterialFile(rf_model_name, rf_material_file)
+            results = rwData.readMaterialsFromXML(rf_material_file)
+            materials = results['materials']
+            materialsIDToName = results['materialsIDToName']
+            materialsNameToID = results['materialsNameToID']
+            for material in materials.values():
+                abqObjects.createMaterialInstance(rf_model_name, material)
         if rf_layup_file != '':
             readLayupFile(rf_model_name, rf_layup_file, mid_name)
 
@@ -76,51 +84,51 @@ def fastGenerate(model_name, material_name, section_name, layup, ply_thickness):
     model.CompositeSolidSection(name = section_name, layup = tuple(section_layer))
     
     return 1
-    
-    
-def readMaterialFile(model_name, file_name):
-    
-    model = mdb.models[model_name]
-    tree = et.parse(file_name)
-    mtr_root = tree.getroot()
-    
-    mid_name = {}
-#    mname_id = {}
 
-    for mtr in mtr_root:
-        material_id   = int(mtr.find('id').text)
-        material_name = mtr.find('name').text
-        material_type = mtr.get('type')
-        density = mtr.find('density')
-        mid_name[material_id] = material_name
-#        mname_id[material_name] = material_id
-        m = model.Material(name = material_name)
-        if not density == None:
-            dens = float(density.text)
-            m.Density(table = ((dens,),))
-        if material_type == 'ISOTROPIC':
-            e = float(mtr.find('e').text)
-            nu = float(mtr.find('nu').text)
-            prop = ((e, nu),)
-            m.Elastic(type = ISOTROPIC, table = prop)
-#            sn = material_name + '_0.0'
-#            model.HomogeneousSolidSection(name = sn, material = material_name, thickness = None)
-        elif material_type == 'ENGINEERING CONSTANTS':
-            e1 = float(mtr.find('e1').text)
-            e2 = float(mtr.find('e2').text)
-            e3 = float(mtr.find('e3').text)
-            g12 = float(mtr.find('g12').text)
-            g13 = float(mtr.find('g13').text)
-            g23 = float(mtr.find('g23').text)
-            nu12 = float(mtr.find('nu12').text)
-            nu13 = float(mtr.find('nu13').text)
-            nu23 = float(mtr.find('nu23').text)
-            prop = ((e1, e2, e3, nu12, nu13, nu23, g12, g13, g23),)
-            m.Elastic(type = ENGINEERING_CONSTANTS, table = prop)
-        
-    
-    return mid_name
-    
+
+# def readMaterialFile(model_name, file_name):
+
+#     model = mdb.models[model_name]
+#     tree = et.parse(file_name)
+#     mtr_root = tree.getroot()
+
+#     mid_name = {}
+# #    mname_id = {}
+
+#     for mtr in mtr_root:
+#         material_id   = int(mtr.find('id').text)
+#         material_name = mtr.find('name').text
+#         material_type = mtr.get('type')
+#         density = mtr.find('density')
+#         mid_name[material_id] = material_name
+# #        mname_id[material_name] = material_id
+#         m = model.Material(name = material_name)
+#         if not density == None:
+#             dens = float(density.text)
+#             m.Density(table = ((dens,),))
+#         if material_type == 'ISOTROPIC':
+#             e = float(mtr.find('e').text)
+#             nu = float(mtr.find('nu').text)
+#             prop = ((e, nu),)
+#             m.Elastic(type = ISOTROPIC, table = prop)
+# #            sn = material_name + '_0.0'
+# #            model.HomogeneousSolidSection(name = sn, material = material_name, thickness = None)
+#         elif material_type == 'ENGINEERING CONSTANTS':
+#             e1 = float(mtr.find('e1').text)
+#             e2 = float(mtr.find('e2').text)
+#             e3 = float(mtr.find('e3').text)
+#             g12 = float(mtr.find('g12').text)
+#             g13 = float(mtr.find('g13').text)
+#             g23 = float(mtr.find('g23').text)
+#             nu12 = float(mtr.find('nu12').text)
+#             nu13 = float(mtr.find('nu13').text)
+#             nu23 = float(mtr.find('nu23').text)
+#             prop = ((e1, e2, e3, nu12, nu13, nu23, g12, g13, g23),)
+#             m.Elastic(type = ENGINEERING_CONSTANTS, table = prop)
+
+
+#     return mid_name
+
 
 def readLayupFile(model_name, file_name, mid_name):
     

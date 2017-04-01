@@ -7,8 +7,8 @@
 #        Complete directory and file name of the database
 #   Output:
 #   1. materials = {
-#          materialID1: properties1,
-#          materialID2: properties2,
+#          materialID1: {'name': materialName1, 'properties': properties1},
+#          materialID2: {'name': materialName2, 'properties': properties2},
 #          ...
 #      }
 #      properties = {
@@ -131,10 +131,12 @@ def readMaterialsFromXML(materialDBName):
 
         properties['constants'].append(constants)
 
-        materials[materialID] = properties
-
-        return {
-            'materials': materials,
-            'materialsIDToName': materialsIDToName,
-            'materialsNameToID': materialsNameToID
+        materials[materialID] = {
+            'name': materialName, 'properties': properties
         }
+
+    return {
+        'materials': materials,
+        'materialsIDToName': materialsIDToName,
+        'materialsNameToID': materialsNameToID
+    }
