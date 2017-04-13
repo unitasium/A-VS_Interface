@@ -53,8 +53,7 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'E'*2, [mp[7], 0.0])
             writeFormat(file, 'E'*1, [mp[8]])
             if analysis == 1:
-                mp1=[mp1[0],mp1[1],mp1[2], 0.0, 0.0, 0.0, mp1[3] ]
-                writeFormat(file, 'E'*7, mp1)
+                writeFormat(file, 'E'*4, mp1)
         elif matType == ANISOTROPIC:
             writeFormat(file, 'ddd', [int(mat_id), 2, ntemp])
             writeFormat(file, 'EE', [float(temperature), float(density)])
@@ -65,7 +64,6 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'E'*2, [mp[14], mp[19]])
             writeFormat(file, 'E'*1, [mp[20]])
             if analysis == 1:
-                mp1=[mp1[0],mp1[1],mp1[2], mp1[5], mp1[4], mp1[3], mp1[6] ]
                 writeFormat(file, 'E'*7, mp1)
 
     return

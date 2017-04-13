@@ -149,14 +149,14 @@ class SCToolsetGui(AFXToolsetGui):
                       tgt   = VisualForm(self), 
                       sel   = AFXMode.ID_ACTIVATE)
                       
-        FXVerticalSeparator(p=toolbar_group_1, x=0, y=0, w=0, h=0, pl=2, pr=2, pt=2, pb=2)
+        # FXVerticalSeparator(p=toolbar_group_1, x=0, y=0, w=0, h=0, pl=2, pr=2, pt=2, pb=2)
         
-        ic = afxCreateIcon(os.path.join(thisDir, 'vabs_small.png'))
-        AFXToolButton(p     = toolbar_group_1, 
-                      label = '\tVABS', 
-                      icon  = ic, 
-                      tgt   = VabsForm(self), 
-                      sel   = AFXMode.ID_ACTIVATE)
+        # ic = afxCreateIcon(os.path.join(thisDir, 'vabs_small.png'))
+        # AFXToolButton(p     = toolbar_group_1, 
+        #               label = '\tVABS', 
+        #               icon  = ic, 
+        #               tgt   = VabsForm(self), 
+        #               sel   = AFXMode.ID_ACTIVATE)
 
     def getKernelInitializationCommand(self):
         
