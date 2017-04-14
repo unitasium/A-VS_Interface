@@ -143,9 +143,9 @@ class VABSToolsetGui(AFXToolsetGui):
         #               tgt   = LocalForm(self), 
         #               sel   = AFXMode.ID_ACTIVATE)
         
-        ic = afxCreateIcon(os.path.join(thisDir, 'vabs_small.png'))
+        ic = afxCreateIcon(os.path.join(thisDir, 'vabs_home_dehome_small.png'))
         AFXToolButton(p     = toolbar_group_1, 
-                      label = '\tVABS', 
+                      label = '\tHomogenization &\tDehomogenization', 
                       icon  = ic, 
                       tgt   = VabsForm(self), 
                       sel   = AFXMode.ID_ACTIVATE)

@@ -12,6 +12,6 @@
 - Cannot import materials or layups alone.
 
 ## Optimization
-- Redesign the VABS logo.
+- ~~Redesign the VABS logo.~~
 - ~~Better parsing process for Abaqus input.~~
 - Better way to store layer information (material id/name + fiber orientation)
