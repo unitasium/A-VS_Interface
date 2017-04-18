@@ -118,6 +118,7 @@ def createAirfoil(project_name, control_file):
         webs_layup = []     # [layup_id, ...]
         nfills = 0
         fills = {}          # {id: [region, material_id], ...}
+                            # {region: materialId, ...}
         shape = et.parse(ffn_shape)
         assmb = shape.getroot()
         for p in assmb:
@@ -158,7 +159,8 @@ def createAirfoil(project_name, control_file):
                 for i, f in enumerate(p):
                     m = f.get('material')
                     r = f.text
-                    fills[i+1] = [int(r), m]
+                    # fills[i+1] = [int(r), m]
+                    fills[int(r)] = m
                 nfills = len(fills)
 
         # if coord_lps[0] != (0.0, 0.0):
@@ -180,10 +182,14 @@ def createAirfoil(project_name, control_file):
             mc.mid_name[material_id] = material_name
             mc.mname_id[material_name] = material_id
 
-        for v in fills.values():
-            mname = v[1]
-            mid = mc.mname_id[mname]
-            v[1] = mid
+        # for v in fills.values():
+        #     mname = v[1]
+        #     mid = mc.mname_id[mname]
+        #     v[1] = mid
+        for regionId in fills.keys():
+            materialName = fills[regionId]
+            materialId = mc.mname_id[materialName]
+            fills[regionId] = materialId
 
         # ----------------------------------------------------------------------
         # Read layups
@@ -1053,10 +1059,14 @@ def createAirfoil(project_name, control_file):
             
             fill_fpt_del = fill_fpt[:]
             fill_fpt = {}
-            for i in range(len(fills.keys())):
-                fno = fills[i+1][0]
-                fill_fpt[i+1] = fill_fpt_del[fno-1]
-                del fill_fpt_del[fno-1]
+            fillingRegionIds = sorted(fills.keys(), reverse=True)
+            # for i in range(len(fills.keys())):
+            #     fno = fills[i+1][0]
+            #     fill_fpt[i+1] = fill_fpt_del[fno-1]
+            #     del fill_fpt_del[fno-1]
+            for i in fillingRegionIds:
+                fill_fpt[i] = fill_fpt_del[i-1]
+                del fill_fpt_del[i-1]
             ff = pf.faces
             for pt in fill_fpt_del:
                 pt = (0.0,) + pt
@@ -1347,7 +1357,8 @@ def createAirfoil(project_name, control_file):
         if nfills != 0:
             fill_fid = []
             for k, v in fill_fpt.items():
-                mtr_id = fills[k][1]
+                # mtr_id = fills[k][1]
+                mtr_id = fills[k]
                 mtr_name = mc.mid_name[mtr_id]
                 sn = mtr_name + '_0.0'
                 pt = (0.0,) + v
