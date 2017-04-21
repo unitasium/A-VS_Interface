@@ -34,7 +34,12 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'EE', [float(temperature), float(density)])
             writeFormat(file, 'EE', mp[:2])
             if analysis == 1:
-                writeFormat(file, 'EE', mp1)
+                try: 
+                    writeFormat(file, 'EE', mp1)
+                except:
+                    raise materialTypeError( 'Isotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name)
+                    print 'Isotropic CTE and specificHeat is not defined properly in material \'%s\' ' %mat_name
+                    print 'CTE must have the same type as the elastic properties: isotropic, orthotric or anithotropic for the same material.' 
         elif matType == ENGINEERING_CONSTANTS:
             writeFormat(file, 'ddd', [int(mat_id), 1, ntemp])
             writeFormat(file, 'EE', [float(temperature), float(density)])
@@ -42,7 +47,12 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'EEE', mp[6:9])
             writeFormat(file, 'EEE', mp[3:6])
             if analysis == 1:
-                writeFormat(file, 'E'*4, mp1)
+                try:
+                    writeFormat(file, 'E'*4, mp1)
+                except:
+                    raise materialTypeError( 'Orthotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name)
+                    print 'Orthotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name
+                    print 'CTE must have the same type as the elastic properties: isotropic, orthotric or anithotropic for the same material.' 
         elif matType == ORTHOTROPIC:
             writeFormat(file, 'ddd', [int(mat_id), 2, ntemp])
             writeFormat(file, 'EE', [float(temperature), float(density)])
@@ -53,8 +63,14 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'E'*2, [mp[7], 0.0])
             writeFormat(file, 'E'*1, [mp[8]])
             if analysis == 1:
-                mp1=[mp1[0],mp1[1],mp1[2], 0.0, 0.0, 0.0, mp1[3] ]
-                writeFormat(file, 'E'*7, mp1)
+                try:
+                    mp1=[mp1[0],mp1[1],mp1[2], 0.0, 0.0, 0.0, mp1[3] ]
+                    writeFormat(file, 'E'*7, mp1)
+                except:
+                    raise materialTypeError( 'Orthotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name)
+                    print 'Orthotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name
+                    print 'CTE must have the same type as the elastic properties: isotropic, orthotric or anithotropic for the same material.' 
+                                
         elif matType == ANISOTROPIC:
             writeFormat(file, 'ddd', [int(mat_id), 2, ntemp])
             writeFormat(file, 'EE', [float(temperature), float(density)])
@@ -65,9 +81,13 @@ def writeMaterials(matDict, analysis, model_name, file):
             writeFormat(file, 'E'*2, [mp[14], mp[19]])
             writeFormat(file, 'E'*1, [mp[20]])
             if analysis == 1:
-                mp1=[mp1[0],mp1[1],mp1[2], mp1[5], mp1[4], mp1[3], mp1[6] ]
-                writeFormat(file, 'E'*7, mp1)
-
+                try:
+                    mp1=[mp1[0],mp1[1],mp1[2], mp1[5], mp1[4], mp1[3], mp1[6] ]
+                    writeFormat(file, 'E'*7, mp1)
+                except:
+                    raise materialTypeError( 'Anisotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name)
+                    print 'Anisotropic CTE and specificHeat is not properly defined in material \'%s\' ' % mat_name
+                    print 'CTE must have the same type as the elastic properties: isotropic, orthotric or anithotropic for the same material.' 
     return
 
 def checkMaterials(matDict, analysis, model_name):
@@ -97,4 +117,5 @@ def checkMaterials(matDict, analysis, model_name):
             except:
                 raise ValueError( 'expansion is not defined in material \'%s\' ' % mat_name )
     return
-    
+class materialTypeError(Exception):
+    pass

@@ -317,7 +317,7 @@ def abaLayupGenerate(model_name_abq, part_name,layup_abq, element_type):
     e = p.edges
     p.seedEdgeByNumber(edges=e, number=abaEle_edge, constraint=FINER)
     p.generateMesh()
-    setYZview()
+    uab.setViewYZ(nsg=1, obj=p)
     
     return 1
 
@@ -441,7 +441,7 @@ def abaSection1D(model_name = '', part_name = '', section_name = '', offset_rati
                                     additionalRotationType=ROTATION_NONE, additionalRotationField='',
                                     axis=AXIS_3, angle=0.0, numIntPoints=3)
         
-    setYZview()
+    uab.setViewYZ(nsg=1, obj=p)
     return 1
 
 
@@ -609,6 +609,6 @@ def fromInputfile1D(file_layup_input, model_name, element_type):
                                     additionalRotationType=ROTATION_NONE, additionalRotationField='',
                                     axis=AXIS_3, angle=0.0, numIntPoints=3)
         
-    setYZview()
+    uab.setViewYZ(nsg=1, obj=p)
     
     return 1
