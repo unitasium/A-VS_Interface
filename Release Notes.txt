@@ -1,0 +1,21 @@
+Abaqus-SwiftComp GUI Release Notes
+======================================================================
+
+Version 1.2.2
+4/21/2017
+--------------------
+New Features
+- Added a mesh control input so that mesh size and element type can be
+  set in the control file for generating cross section with airfoil
+  shape.
+
+Bug Fixes
+- Fixed the viewing problem when generating 1D structure genome.
+- Fixed the error when generating airfoil cross section with multiple
+  fillings.
+- Fixed the error when import materials file only without layups file
+  in the 'New Layups' tool.
+
+Optimization
+- Improved the parsing process for converting Abaqus input file to
+  SwiftComp input file.

@@ -8,10 +8,14 @@
 - ~~Mesh control in parametric input file.~~
 
 ## Bug Fix
+- **PREPARE EXAMPLES FOR DEBUGGING.**
 - Show warning or error messages.
 - Cannot import materials or layups alone.
 
 ## Optimization
+- **MERGE THE TWO GUIs.**
 - ~~Redesign the VABS logo.~~
 - ~~Better parsing process for Abaqus input.~~
 - Better way to store layer information (material id/name + fiber orientation)
+- Change the format of layup input file to xml for the 'Read from file' method in the 1D structure genome.
+- Unify the titles, texts, names and notes used in the GUI (button, dialog box, label, etc.).
