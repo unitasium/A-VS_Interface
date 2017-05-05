@@ -22,11 +22,11 @@
 #      }
 #      elastic = E, nu
 #      elastic = E1, E2, E3, nu12, nu13, nu23, G12, G13, G23
-#      elastic = d1111, d1122, d2222, d1133, d2233, d3333, 
+#      elastic = d1111, d1122, d2222, d1133, d2233, d3333,
 #                d1212, d1313, d2323
-#      elastic = d1111, d1122, d2222, d1133, d2233, d3333, 
-#                d1112, d2212, d3312, d1212, d1113, d2213, 
-#                d3313, d1213, d1313, d1123, d2223, d3323, 
+#      elastic = d1111, d1122, d2222, d1133, d2233, d3333,
+#                d1112, d2212, d3312, d1212, d1113, d2213,
+#                d3313, d1213, d1313, d1123, d2223, d3323,
 #                d1223, d1323, d2323
 #   2. materialsIDToName = {
 #          materialID1: materialName1,
@@ -99,7 +99,7 @@ def readMaterialsFromXML(materialDBName):
             d1212 = float(material.find('d1212').text.strip())
             d1313 = float(material.find('d1313').text.strip())
             d2323 = float(material.find('d2323').text.strip())
-            elastic = [d1111, d1122, d2222, d1133, d2233, d3333, 
+            elastic = [d1111, d1122, d2222, d1133, d2233, d3333,
                        d1212, d1313, d2323]
         elif materialType.upper() == 'ANISOTROPIC':
             d1111 = float(material.find('d1111').text.strip())
@@ -123,9 +123,9 @@ def readMaterialsFromXML(materialDBName):
             d1223 = float(material.find('d1223').text.strip())
             d1323 = float(material.find('d1323').text.strip())
             d2323 = float(material.find('d2323').text.strip())
-            elastic = [d1111, d1122, d2222, d1133, d2233, d3333, 
-                       d1112, d2212, d3312, d1212, d1113, d2213, 
-                       d3313, d1213, d1313, d1123, d2223, d3323, 
+            elastic = [d1111, d1122, d2222, d1133, d2233, d3333,
+                       d1112, d2212, d3312, d1212, d1113, d2213,
+                       d3313, d1213, d1313, d1123, d2223, d3323,
                        d1223, d1323, d2323]
         constants['elastic'] = elastic
 
