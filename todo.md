@@ -11,6 +11,7 @@
 - **PREPARE EXAMPLES FOR DEBUGGING.**
 - Show warning or error messages.
 - Cannot import materials or layups alone.
+- 'Feature creation failed' when assign layup with only one layer.
 
 ## Optimization
 - **MERGE THE TWO GUIs.**
