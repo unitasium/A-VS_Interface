@@ -3,6 +3,7 @@
 ## New Features
 - Assign layup for closed shapes.
 - When assigning a layup, pick area by set name.
+- Ply manager.
 - Generate XML parameter files from GUI for future reuse.
 - Run VABS analysis from CAE directly, without creating the job and input file.
 - Create a shortcut with sc/vabs logo.
