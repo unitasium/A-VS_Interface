@@ -14,6 +14,7 @@
 - Show warning or error messages.
 - Cannot import materials or layups alone.
 - 'Feature creation failed' when assign layup with only one layer.
+- Extra letters are appended to the 'New SwiftComp file name' set by user.
 
 ## Optimization
 - **MERGE THE TWO GUIs.**
