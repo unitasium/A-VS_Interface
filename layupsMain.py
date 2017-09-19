@@ -27,7 +27,7 @@ def addLayups(
             for material in materials.values():
                 abqObjects.createMaterialInstance(rf_model_name, material)
         if rf_layup_file != '':
-            readLayupFile(rf_model_name, rf_layup_file, mid_name)
+            readLayupFile(rf_model_name, rf_layup_file, materialsIDToName)
 
     return 1
 

@@ -37,7 +37,7 @@ def createAirfoil(project_name, control_file):
     # cj: Create job and write input
     steps = ['rf', 'sf', 'st', 'cp', 'ff', 'im', 'cs', 'ao', 'gm', 'cj']
     ns = len(steps)
-    tnt = 'all'
+    tnt = 'sf'
 
     # mesh_size   = 0.003
     sp_transform = (0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -335,6 +335,14 @@ def createAirfoil(project_name, control_file):
         cline_c = sketch.ConstructionLine(point1 = (mc.x_offset, -1.0),           # Vertical reference line at the x_offset
                                           point2 = (mc.x_offset, 1.0))
                                           
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Make a copy for the airfoil
+        sa_name = project_name + '_sketch_airfoil'
+        sa = model.ConstrainedSketch(
+          name = sa_name,
+          objectToCopy = model.sketches[ss_name]
+        )
+        
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Make a copy for the mask later
         if nwebs != 0:
