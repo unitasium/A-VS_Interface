@@ -1,0 +1,17 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Abaqus Scripting User\IeC {\textquoteright }s Guide}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}5 Using Python and the Abaqus Scripting Interface}{1}{section.1.1}
+\contentsline {subsection}{\numberline {1.1.1}5.6 Extending the Abaqus Scripting Interface}{1}{subsection.1.1.1}
+\contentsline {subsubsection}{5.6.1 Storing custom data in the model database or in other objects}{1}{subsubsection*.3}
+\contentsline {subsubsection}{5.6.2 Interaction with the GUI}{2}{subsubsection*.4}
+\contentsline {subsubsection}{5.6.3 CommandRegister class}{2}{subsubsection*.5}
+\contentsline {subsubsection}{5.6.4 Repositories}{3}{subsubsection*.6}
+\contentsline {subsubsection}{5.6.5 Repository methods}{3}{subsubsection*.7}
+\contentsline {subsubsection}{5.6.6 RepositorySupport}{4}{subsubsection*.8}
+\contentsline {subsubsection}{5.6.7 Registered dictionaries}{5}{subsubsection*.9}
+\contentsline {subsubsection}{5.6.8 Registered lists}{5}{subsubsection*.10}
+\contentsline {subsubsection}{5.6.9 Registered tuples}{5}{subsubsection*.11}
+\contentsline {subsubsection}{5.6.10 Session data}{6}{subsubsection*.12}
+\contentsline {subsubsection}{5.6.11 Saving application data in a model database}{6}{subsubsection*.13}
+\contentsline {subsubsection}{5.6.12 Checking a model database when it is opened}{6}{subsubsection*.14}
+\contentsline {chapter}{\numberline {2}Indices and tables}{9}{chapter.2}

@@ -3,9 +3,11 @@
 from abaqus import *
 from abaqusConstants import *
 import section
+import customKernel
 import xml.etree.ElementTree as et
 import rwData
-import abqObjects
+import abqClasses
+import parseUserInput as pui
 
 def addLayups(
     method,
@@ -20,14 +22,23 @@ def addLayups(
     elif method == 2:
         if rf_material_file != '':
             # mid_name = readMaterialFile(rf_model_name, rf_material_file)
-            results = rwData.readMaterialsFromXML(rf_material_file)
-            materials = results['materials']
-            materialsIDToName = results['materialsIDToName']
-            materialsNameToID = results['materialsNameToID']
-            for material in materials.values():
-                abqObjects.createMaterialInstance(rf_model_name, material)
+            # results = rwData.readMaterialsFromXML(rf_material_file)
+            # materials = results['materials']
+            # materialsIDToName = results['materialsIDToName']
+            # materialsNameToID = results['materialsNameToID']
+            materials = {}
+            laminas = {}
+            pui.parseMaterialsFromXML(rf_material_file, materials, laminas)
+            for k, v in materials.items():
+                temp_material = {'name': k, 'properties': v['properties']}
+                abqClasses.createMaterialInstance(rf_model_name, temp_material)
         if rf_layup_file != '':
-            readLayupFile(rf_model_name, rf_layup_file, materialsIDToName)
+            layups = {}
+            layer_types = {}
+            pui.parseLayupsFromXML(rf_layup_file, layups, layer_types, laminas)
+            # readLayupFile(rf_model_name, rf_layup_file, materialsIDToName)
+            for k, v in layer_types.items():
+                mdb.customData.LayerType(str(k), v[0], v[1])
 
     return 1
 
