@@ -37,7 +37,7 @@ def createAirfoil(project_name, control_file):
     # cj: Create job and write input
     steps = ['rf', 'sf', 'st', 'cp', 'ff', 'im', 'cs', 'ao', 'gm', 'cj']
     ns = len(steps)
-    tnt = 'sf'
+    tnt = 'all'
 
     # mesh_size   = 0.003
     sp_transform = (0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)

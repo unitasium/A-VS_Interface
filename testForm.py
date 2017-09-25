@@ -7,7 +7,7 @@ import osutils, os
 # Class definition
 ###########################################################################
 
-class Test_plugin(AFXForm):
+class TestForm(AFXForm):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __init__(self, owner):
@@ -20,9 +20,11 @@ class Test_plugin(AFXForm):
         self.cmd = AFXGuiCommand(mode=self, method='',
             objectName='', registerQuery=False)
         pickedDefault = ''
-        self.keyword01Kw = AFXTableKeyword(self.cmd, 'keyword01', True)
-        self.keyword01Kw.setColumnType(0, AFXTABLE_TYPE_FLOAT)
-        self.keyword01Kw.setColumnType(1, AFXTABLE_TYPE_FLOAT)
+        self.layertypeKw = AFXTableKeyword(self.cmd, 'layertype', True)
+        self.layertypeKw.setColumnType(0, AFXTABLE_TYPE_STRING)  # LayerType name
+        self.layertypeKw.setColumnType(1, AFXTABLE_TYPE_STRING)  # LayerType material
+        self.layertypeKw.setColumnType(2, AFXTABLE_TYPE_FLOAT)   # LayerType angle
+        self.layertypeKw.setColumnType(3, AFXTABLE_TYPE_STRING)  # LayerType abq_section
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getFirstDialog(self):
@@ -55,19 +57,19 @@ class Test_plugin(AFXForm):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Register the plug-in
 #
-thisPath = os.path.abspath(__file__)
-thisDir = os.path.dirname(thisPath)
+# thisPath = os.path.abspath(__file__)
+# thisDir = os.path.dirname(thisPath)
 
-toolset = getAFXApp().getAFXMainWindow().getPluginToolset()
-toolset.registerGuiMenuButton(
-    buttonText='test', 
-    object=Test_plugin(toolset),
-    messageId=AFXMode.ID_ACTIVATE,
-    icon=None,
-    kernelInitString='',
-    applicableModules=ALL,
-    version='N/A',
-    author='N/A',
-    description='N/A',
-    helpUrl='N/A'
-)
+# toolset = getAFXApp().getAFXMainWindow().getPluginToolset()
+# toolset.registerGuiMenuButton(
+#     buttonText='test', 
+#     object=TestForm(toolset),
+#     messageId=AFXMode.ID_ACTIVATE,
+#     icon=None,
+#     kernelInitString='',
+#     applicableModules=ALL,
+#     version='N/A',
+#     author='N/A',
+#     description='N/A',
+#     helpUrl='N/A'
+# )

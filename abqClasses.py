@@ -8,13 +8,17 @@ class LayerType(CommandRegister):
 
     count = 0  # Number of layer types
 
-    def __init__(self, name, material_name, fiber_angle):
+    def __init__(self, name, material, angle, abq_section=''):
         CommandRegister.__init__(self)
-        self.material_name = material_name
-        self.fiber_angle = fiber_angle
+        self.material = material
+        self.angle = angle
+        self.abq_section = abq_section
         # self.updateLayerName(material_name, fiber_angle)
         LayerType.count += 1
 
+    def setAbqSection(self, abq_section):
+        self.abq_section = abq_section
+    
     # def updateLayerName(self, material_name, fiber_angle):
     #   self.material_name = material_name
     #   self.fiber_angle = fiber_angle

@@ -21,6 +21,7 @@ from scMacroForm import MacroForm
 from scLocalForm import LocalForm
 from scVisualForm import VisualForm
 from vabsForm import VabsForm
+from testForm import TestForm
 import os
 
 thisPath = os.path.abspath(__file__)
@@ -157,6 +158,13 @@ class DEVToolsetGui(AFXToolsetGui):
         #               icon  = ic, 
         #               tgt   = VabsForm(self), 
         #               sel   = AFXMode.ID_ACTIVATE)
+
+        ic = afxCreateIcon(os.path.join(thisDir, 'dev_test_small.png'))
+        AFXToolButton(p     = toolbar_group_1, 
+                      label = '\tTest', 
+                      icon  = ic, 
+                      tgt   = TestForm(self), 
+                      sel   = AFXMode.ID_ACTIVATE)
 
     def getKernelInitializationCommand(self):
         
