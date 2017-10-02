@@ -6,18 +6,36 @@ from customKernel import CommandRegister
 
 class LayerType(CommandRegister):
 
-    count = 0  # Number of layer types
+    # count = 0  # Number of layer types
 
-    def __init__(self, name, material, angle, abq_section=''):
+    def __init__(self, name, material, angle, abaqusSection=''):
         CommandRegister.__init__(self)
         self.material = material
         self.angle = angle
-        self.abq_section = abq_section
+        self.abaqusSection = abaqusSection
         # self.updateLayerName(material_name, fiber_angle)
-        LayerType.count += 1
+        # LayerType.count += 1
 
-    def setAbqSection(self, abq_section):
-        self.abq_section = abq_section
+    def setMaterial(self, material):
+        self.material = material
+        return 1
+    
+    def setAngle(self, angle):
+        self.angle = angle
+        return 1
+
+    def setAbaqusSection(self, abaqusSection):
+        self.abaqusSection = abaqusSection
+        return 1
+    
+    def updateLayerType(self, material, angle, abaqusSection):
+        if self.material != material:
+            self.material = material
+        if self.angle != angle:
+            self.angle = angle
+        if self.abaqusSection != abaqusSection:
+            self.abaqusSection = abaqusSection
+        return 1
     
     # def updateLayerName(self, material_name, fiber_angle):
     #   self.material_name = material_name

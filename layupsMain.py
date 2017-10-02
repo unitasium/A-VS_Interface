@@ -38,7 +38,7 @@ def addLayups(
             pui.parseLayupsFromXML(rf_layup_file, layups, layer_types, laminas)
             # readLayupFile(rf_model_name, rf_layup_file, materialsIDToName)
             for k, v in layer_types.items():
-                mdb.customData.LayerType(str(k), v[0], v[1])
+                mdb.customData.LayerType(k, v[0], v[1])
 
     return 1
 

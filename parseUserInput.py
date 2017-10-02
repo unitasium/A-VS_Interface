@@ -100,17 +100,17 @@ def parseMaterialsFromXML(material_db_name, materials, laminas):
 
 # ====================================================================
 # layups = {
-#     layup_name: {'id': layup_id, 'thickness': thickness, 'layers': layers},
+#     layup_name: {'name': layup_name, 'thickness': thickness, 'layers': layers},
 #     ...
 # }
 # where
 # layers = [
-#     [layer_type_id, thickness],
+#     [layer_type_name, thickness],
 #     ...
 # ]
 #
 # layer_types = {
-#     layer_type_id: [material_name, angle],
+#     layer_type_name: [material_name, angle],
 #     ...
 # }
 # ====================================================================
@@ -125,11 +125,11 @@ def parseLayupsFromXML(layup_db_name, layups, layer_types, laminas):
     layups_tree = et.parse(layup_db_name)
     layups_root = layups_tree.getroot()
 
-    layup_id = n_layups
+    # layup_id = n_layups
     # layer_type_id = n_layer_types
 
     for element_layup in layups_root:
-        layup_id += 1
+        # layup_id += 1
         layup_name = element_layup.get('name').strip()
         total_thickness = 0.0
         layers = []
@@ -150,17 +150,18 @@ def parseLayupsFromXML(layup_db_name, layups, layer_types, laminas):
             layer_type_id = 0
             for k, v in layer_types.items():
                 if v == layer_type:
-                    layer_type_id = k
+                    layer_type_name = k
                     break
             if layer_type_id == 0:
                 layer_type_id = len(layer_types) + 1
-                layer_types[layer_type_id] = layer_type
+                layer_type_name = 'LayerType-' + str(layer_type_id)
+                layer_types[layer_type_name] = layer_type
             
             for i in range(n_stack):
-                layers.append([layer_type_id, lamina_thickness])
+                layers.append([layer_type_name, lamina_thickness])
                 total_thickness += lamina_thickness
         layups[layup_name] = {
-            'id': layup_id, 'thickness': total_thickness, 'layers': layers
+            'name': layup_name, 'thickness': total_thickness, 'layers': layers
         }
     
     return 0
