@@ -28,13 +28,14 @@ class LayerType(CommandRegister):
         self.abaqusSection = abaqusSection
         return 1
     
-    def updateLayerType(self, material, angle, abaqusSection):
-        if self.material != material:
-            self.material = material
-        if self.angle != angle:
-            self.angle = angle
-        if self.abaqusSection != abaqusSection:
-            self.abaqusSection = abaqusSection
+    # def updateLayerType(self, material, angle, abaqusSection):
+    def updateLayerType(self, **kwargs):
+        if self.material != kwargs['material']:
+            setMaterial(kwargs['material'])
+        if self.angle != float(kwargs['angle']):
+            setAngle(float(kwargs['angle']))
+        if self.abaqusSection != kwargs['abaqusSection']:
+            setAbaqusSection(kwargs['abaqusSection'])
         return 1
     
     # def updateLayerName(self, material_name, fiber_angle):

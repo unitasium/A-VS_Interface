@@ -28,6 +28,8 @@ class ScLayerTypeManagerForm(AFXForm):
         self.layertypeKw.setColumnType(2, AFXTABLE_TYPE_FLOAT)   # LayerType angle
         self.layertypeKw.setColumnType(3, AFXTABLE_TYPE_STRING)  # LayerType abq_section
 
+        # self.layertypenamesKw = AFXTupleKeyword(self.cmd, 'layertypenames', True)
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getFirstDialog(self):
 

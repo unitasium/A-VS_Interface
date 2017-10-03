@@ -66,6 +66,9 @@ class ScLayerTypeManagerDB(AFXDataDialog):
             vf, 6, 4, 6, 4, form.layertypeKw, 0, 
             AFXTABLE_COLUMN_RESIZABLE|AFXTABLE_ROW_MODE|AFXTABLE_SINGLE_SELECT|LAYOUT_FILL_X
         )
+        # self.ci_layertypename = AFXColumnItems(
+        #     referenceColumn=0, tgt=
+        # )
         self.table_layertypes.setLeadingRows(1)
         # self.table_layertypes.setLeadingColumns(1)
         self.table_layertypes.setColumnWidth(-1, 100)

@@ -24,8 +24,15 @@ class ScLayerTypeEditorForm(AFXForm):
         AFXForm.__init__(self, owner)
         self.radioButtonGroups = {}
 
-        self.cmd = AFXGuiCommand(mode=self, method='',
-            objectName='', registerQuery=False)
+        if self.edit_mode == 'create':
+            self.cmd = AFXGuiCommand(
+                mode=self, method='LayerType', objectName='mdb.customData', registerQuery=False
+            )
+        elif self.edit_mode == 'edit':
+            obj_name = "mdb.customData.layerTypes['%s']" % self.layer_type_name
+            self.cmd = AFXGuiCommand(
+                mode=self, method='updateLayerType', objectName=obj_name, registerQuery=False
+            )
         pickedDefault = ''
         self.nameKw = AFXStringKeyword(self.cmd, 'name', True, '')
         self.materialKw = AFXStringKeyword(self.cmd, 'material', True)
@@ -33,6 +40,13 @@ class ScLayerTypeEditorForm(AFXForm):
         self.abaqusSectionKw = AFXStringKeyword(self.cmd, 'abaqusSection', True)
 
         self.nameKw.setValue(self.layer_type_name)
+
+        # if self.edit_mode == 'create':
+        #     self.cmd.setObjectName('mdb.customData')
+        #     self.cmd.setMethod('LayerType')
+        # elif self.edit_mode == 'edit':
+        #     self.cmd.setObjectName('mdb.customData.layerTypes[%s]' % self.nameKw.getValue())
+        #     self.cmd.setMethod('updateLayerType')
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getFirstDialog(self):
