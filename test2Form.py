@@ -7,32 +7,39 @@ import osutils, os
 # Class definition
 ###########################################################################
 
-class ScLayerTypeManagerForm(AFXForm):
+class Test2Form(AFXForm):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def __init__(self, owner):
+    def __init__(self, owner, **kwargs):
         
+        self.edit_mode = kwargs['editMode']  # Create or edit
+        self.layer_type_name = ''
+        if self.edit_mode == 'edit':
+            self.layer_type_name = kwargs['layerTypeName']
+        
+        # print len(kwargs)
+
         # Construct the base class.
         #
         AFXForm.__init__(self, owner)
         self.radioButtonGroups = {}
 
-        self.owner = owner
-
         self.cmd = AFXGuiCommand(mode=self, method='',
             objectName='', registerQuery=False)
         pickedDefault = ''
-        self.layertypeKw = AFXTableKeyword(self.cmd, 'layertype', True)
-        self.layertypeKw.setColumnType(0, AFXTABLE_TYPE_STRING)  # LayerType name
-        self.layertypeKw.setColumnType(1, AFXTABLE_TYPE_STRING)  # LayerType material
-        self.layertypeKw.setColumnType(2, AFXTABLE_TYPE_FLOAT)   # LayerType angle
-        self.layertypeKw.setColumnType(3, AFXTABLE_TYPE_STRING)  # LayerType abq_section
+        self.nameKw = AFXStringKeyword(self.cmd, 'name', True, '')
+        self.materialKw = AFXStringKeyword(self.cmd, 'material', True)
+        self.angleKw = AFXFloatKeyword(self.cmd, 'angle', True, 0.0)
+        self.abaqusSectionKw = AFXStringKeyword(self.cmd, 'abaqusSection', True)
+
+        self.nameKw.setValue(self.layer_type_name)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getFirstDialog(self):
 
-        import scLayerTypeManagerDB
-        return scLayerTypeManagerDB.ScLayerTypeManagerDB(self, owner=self.owner)
+        import test2DB
+        # return scLayerTypeEditorDB.ScLayerTypeEditorDB(self, editMode=self.edit_mode)
+        return test2DB.Test2DB(self)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def doCustomChecks(self):
@@ -64,8 +71,8 @@ class ScLayerTypeManagerForm(AFXForm):
 
 # toolset = getAFXApp().getAFXMainWindow().getPluginToolset()
 # toolset.registerGuiMenuButton(
-#     buttonText='test', 
-#     object=TestForm(toolset),
+#     buttonText='scLayerTypeEditor', 
+#     object=ScLayerTypeEditor_plugin(toolset),
 #     messageId=AFXMode.ID_ACTIVATE,
 #     icon=None,
 #     kernelInitString='',

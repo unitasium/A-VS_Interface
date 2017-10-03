@@ -21,7 +21,7 @@ from scMacroForm import MacroForm
 from scLocalForm import LocalForm
 from scVisualForm import VisualForm
 from vabsForm import VabsForm
-# from testForm import TestForm
+from test2Form import Test2Form
 from scLayerTypeManagerForm import ScLayerTypeManagerForm
 from scLayerTypeEditorForm import ScLayerTypeEditorForm
 import os
@@ -172,14 +172,7 @@ class DEVToolsetGui(AFXToolsetGui):
         AFXToolButton(p     = toolbar_group_1, 
                       label = '\tAdd Layer Type', 
                       icon  = ic, 
-                      tgt   = ScLayerTypeEditorForm(self, 'create'), 
-                      sel   = AFXMode.ID_ACTIVATE)
-
-        ic = afxCreateIcon(os.path.join(thisDir, 'dev_test_small.png'))
-        AFXToolButton(p     = toolbar_group_1, 
-                      label = '\tEdit Layer Type', 
-                      icon  = ic, 
-                      tgt   = ScLayerTypeEditorForm(self, 'edit'), 
+                      tgt   = ScLayerTypeEditorForm(self, editMode='create'), 
                       sel   = AFXMode.ID_ACTIVATE)
 
     def getKernelInitializationCommand(self):

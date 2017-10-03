@@ -10,14 +10,19 @@ import osutils, os
 class ScLayerTypeEditorForm(AFXForm):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def __init__(self, owner, editMode):
+    def __init__(self, owner, **kwargs):
         
+        self.edit_mode = kwargs['editMode']  # Create or edit
+        self.layer_type_name = ''
+        if self.edit_mode == 'edit':
+            self.layer_type_name = kwargs['layerTypeName']
+        
+        # print self.edit_mode
+
         # Construct the base class.
         #
         AFXForm.__init__(self, owner)
         self.radioButtonGroups = {}
-
-        self.editMode = editMode  # Add or edit
 
         self.cmd = AFXGuiCommand(mode=self, method='',
             objectName='', registerQuery=False)
@@ -27,11 +32,14 @@ class ScLayerTypeEditorForm(AFXForm):
         self.angleKw = AFXFloatKeyword(self.cmd, 'angle', True, 0.0)
         self.abaqusSectionKw = AFXStringKeyword(self.cmd, 'abaqusSection', True)
 
+        self.nameKw.setValue(self.layer_type_name)
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getFirstDialog(self):
 
         import scLayerTypeEditorDB
-        return scLayerTypeEditorDB.ScLayerTypeEditorDB(self, self.editMode)
+        # return scLayerTypeEditorDB.ScLayerTypeEditorDB(self, editMode=self.edit_mode)
+        return scLayerTypeEditorDB.ScLayerTypeEditorDB(self)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def doCustomChecks(self):

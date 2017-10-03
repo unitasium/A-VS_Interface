@@ -147,12 +147,14 @@ def parseLayupsFromXML(layup_db_name, layups, layer_types, laminas):
             material_name = laminas[lamina_name]['material']
             lamina_thickness = laminas[lamina_name]['thickness']
             layer_type = [material_name, angle]
-            layer_type_id = 0
+            layer_type_new = True
+            # layer_type_id = 0
             for k, v in layer_types.items():
                 if v == layer_type:
+                    layer_type_new = False
                     layer_type_name = k
                     break
-            if layer_type_id == 0:
+            if layer_type_new:
                 layer_type_id = len(layer_types) + 1
                 layer_type_name = 'LayerType-' + str(layer_type_id)
                 layer_types[layer_type_name] = layer_type
