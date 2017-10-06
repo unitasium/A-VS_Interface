@@ -24,6 +24,7 @@ from vabsForm import VabsForm
 from test2Form import Test2Form
 from scLayerTypeManagerForm import ScLayerTypeManagerForm
 from scLayerTypeEditorForm import ScLayerTypeEditorForm
+from testButtonForm import TestButtonForm
 import os
 
 thisPath = os.path.abspath(__file__)
@@ -173,6 +174,13 @@ class DEVToolsetGui(AFXToolsetGui):
                       label = '\tAdd Layer Type', 
                       icon  = ic, 
                       tgt   = ScLayerTypeEditorForm(self, editMode='create'), 
+                      sel   = AFXMode.ID_ACTIVATE)
+        
+        ic = afxCreateIcon(os.path.join(thisDir, 'dev_test_small.png'))
+        AFXToolButton(p     = toolbar_group_1, 
+                      label = '\tTest Button', 
+                      icon  = ic, 
+                      tgt   = TestButtonForm(self), 
                       sel   = AFXMode.ID_ACTIVATE)
 
     def getKernelInitializationCommand(self):

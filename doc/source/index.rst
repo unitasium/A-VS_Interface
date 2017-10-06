@@ -10,6 +10,7 @@ Welcome to A-SV Interface's documentation!
   :maxdepth: 2
   :caption: Contents:
 
+  development
   abq_script_guide
 
 Indices and tables

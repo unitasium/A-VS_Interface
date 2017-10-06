@@ -6,8 +6,9 @@ from part import *
 from assembly import *
 from mesh import *
 from job import *
-from utilities import *
+import utilities as utl
 import utilities_abq as uab
+import globalConstants as gcs
 import customKernel
 import sys
 import time
@@ -45,6 +46,13 @@ def createAirfoil(project_name, control_file):
     # cwd = os.getcwd()  # current working directory
     cwd = os.path.dirname(control_file)
     os.chdir(cwd)
+
+    project = et.parse(control_file)
+    project = project.getroot()
+
+    if project_name == '':
+        project_name = project.get('name')
+
     log_name    = os.path.join(cwd, project_name+'.log')
     debug_name  = os.path.join(cwd, project_name+'.debug')
     cae_name    = os.path.join(cwd, project_name+'.cae')
@@ -81,8 +89,8 @@ def createAirfoil(project_name, control_file):
 
         # ----------------------------------------------------------------------
         # Read control file
-        project = et.parse(control_file)
-        project = project.getroot()
+        # project = et.parse(control_file)
+        # project = project.getroot()
 
         fn_shape    = project.find('shapes').text
         fn_material = project.find('materials').text
@@ -303,6 +311,7 @@ def createAirfoil(project_name, control_file):
 
         # ----------------------------------------------------------------------
         # Sketch the airfoil surface
+        print 'Creating sketch {0}...'.format(ss_name)
         sheet_size = mc.chord_length * 2.0
         ss = model.ConstrainedSketch(name=ss_name, sheetSize=sheet_size)
         sketch = ss
@@ -338,6 +347,7 @@ def createAirfoil(project_name, control_file):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Make a copy for the airfoil
         sa_name = project_name + '_sketch_airfoil'
+        print 'Creating sketch {0}...'.format(sa_name)
         sa = model.ConstrainedSketch(
           name = sa_name,
           objectToCopy = model.sketches[ss_name]
@@ -347,6 +357,7 @@ def createAirfoil(project_name, control_file):
         # Make a copy for the mask later
         if nwebs != 0:
             sm_name = project_name + '_sketch_mask'
+            print 'Creating sketch {0}...'.format(sm_name)
             sm = model.ConstrainedSketch(name = sm_name, 
                                          objectToCopy = model.sketches[ss_name])
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -385,6 +396,8 @@ def createAirfoil(project_name, control_file):
         
         # --------------------------
         # Split low pressure surface
+        if gcs.DEBUG:
+            print 'Spliting low pressure surface...'
         sgm_id_lps_out = []
         k = gk_lps
         for i in range(len(clines_lps)):
@@ -400,6 +413,8 @@ def createAirfoil(project_name, control_file):
         
         # ---------------------------
         # Split high pressure surface
+        if gcs.DEBUG:
+            print 'Spliting high pressure surface...'
         sgm_id_hps_out = []
         k = gk_hps
         for i in range(len(clines_hps)):
@@ -469,13 +484,16 @@ def createAirfoil(project_name, control_file):
         # Make a copy for the fillings later
         if nfills != 0:
             sf_name = project_name + '_sketch_fill'
+            print 'Creating sketch {0}...'.format(sf_name)
             sf = model.ConstrainedSketch(name = sf_name, 
                                          objectToCopy = model.sketches[ss_name])
             
         
         # ----------------------------------------------------------------------
         # Offset the total thickness of each layup
-        
+        if gcs.DEBUG:
+            print 'Offsetting surfaces by total thicknesses...'
+
         g = sketch.geometry
         sgm_id_lps_in = []
         for i, sid in enumerate(sgm_id_lps_out):
@@ -504,8 +522,29 @@ def createAirfoil(project_name, control_file):
             gk = g.keys()
             sgm_id_hps_in.append(gk[-1])
         
-        # ----------------------------------------------------------------------
+        # ------------------------------------------------------------
+        # Trim the leading edge
+        if gcs.DEBUG:
+            print 'Trimming the leading edge...'
+        g = sketch.geometry
+        gid_lps = sgm_id_lps_in[0]
+        gid_hps = sgm_id_hps_in[0]
+        spline_lps = g[gid_lps]
+        spline_hps = g[gid_hps]
+        vertex_lps = spline_lps.getVertices()[-1]
+        vertex_hps = spline_hps.getVertices()[0]
+        coords_lps = vertex_lps.coords
+        coords_hps = vertex_hps.coords
+        if utl.getDistance(coords_lps, coords_hps) > gcs.TOLERANCE:
+            [new_l, new_h] = uab.trimIntersectCurves(
+                sketch, gid_lps, 1, gid_hps, 2, (1.0, 0.0)
+            )
+            sgm_id_lps_in = [new_l,] + sgm_id_lps_in[1:]
+            sgm_id_hps_in = [new_h,] + sgm_id_hps_in[1:]
+
         # Trim the trailing edge
+        if gcs.DEBUG:
+            print 'Trimming the trailing edge...'
         g = sketch.geometry
         gid_lps = sgm_id_lps_in[-1]
         gid_hps = sgm_id_hps_in[-1]
@@ -534,8 +573,10 @@ def createAirfoil(project_name, control_file):
             v1 = v_lps_in[i][1]
             v2  = v_lps_in[i+1][0]
             v0 = sgm_divpt_lps_new[i+1]
-            d1 = uab.findTwoPointsDistance(v0, v1)
-            d2 = uab.findTwoPointsDistance(v0, v2)
+            # d1 = uab.findTwoPointsDistance(v0, v1)
+            # d2 = uab.findTwoPointsDistance(v0, v2)
+            d1 = utl.getDistance(v0, v1)
+            d2 = utl.getDistance(v0, v1)
             if d1 < d2:
                 v_near_lps.append(v1)
             elif d1 > d2:
@@ -628,6 +669,7 @@ def createAirfoil(project_name, control_file):
         
         if nwebs != 0:
             sw_name = project_name + '_sketch_webs_trim0'
+            print 'Creating sketch {0}...'.format(sw_name)
             sw = model.ConstrainedSketch(name = sw_name, sheetSize = sheet_size)
             sw.sketchOptions.setValues(gridOrigin = (0.0, 0.0))
             

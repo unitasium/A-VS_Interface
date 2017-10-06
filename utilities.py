@@ -71,3 +71,11 @@ def eleFormat(format1, format2):
 
     return eleFormat
 
+def getDistance(p1, p2):
+    # Calculate distance between two points
+    # p1 and p2 are lists of x, y, z coordinates
+    d2 = (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
+    if len(p1) == 3 and len(p2) == 3:
+        d2 += (p1[2]-p2[2])**2
+
+    return math.sqrt(d2)

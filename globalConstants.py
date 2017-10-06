@@ -1,5 +1,8 @@
 # Global constants
 
+DEBUG = True
+TOLERANCE = 1.0E-06
+
 LABELS_ISOTROPIC = ('e', 'nu')
 
 LABELS_ENGINEERING_CONSTANTS = (
