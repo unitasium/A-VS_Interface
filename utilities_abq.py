@@ -72,13 +72,21 @@ def findEndPoints(sketch, edge_id):
     
     return [v1, v2]
 
+def getAPointOnLine(sketch, line_id, percentDistance=50):
+    g = sketch.geometry
+    line = g[line_id]
+    start = line.getVertices()[0].coords
+    result = line.getPointAtDistance(
+        point=start, distance=percentDistance, percentage=True
+    )
+    return result
 
-def findTwoPointsDistance(point1, point2):
-    x1, y1 = point1[0], point1[1]
-    x2, y2 = point2[0], point2[1]
-    d = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+# def findTwoPointsDistance(point1, point2):
+#     x1, y1 = point1[0], point1[1]
+#     x2, y2 = point2[0], point2[1]
+#     d = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
     
-    return d
+#     return d
 
 
 def refreshSets(mdb, model_name, part_name, set_fpt):

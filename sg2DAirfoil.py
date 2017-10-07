@@ -536,6 +536,7 @@ def createAirfoil(project_name, control_file):
         coords_lps = vertex_lps.coords
         coords_hps = vertex_hps.coords
         if utl.getDistance(coords_lps, coords_hps) > gcs.TOLERANCE:
+            gcs.TRIM_LEADING_EDGE = True
             [new_l, new_h] = uab.trimIntersectCurves(
                 sketch, gid_lps, 1, gid_hps, 2, (1.0, 0.0)
             )
@@ -599,8 +600,10 @@ def createAirfoil(project_name, control_file):
             v1 = v_hps_in[i][1]
             v2  = v_hps_in[i+1][0]
             v0 = sgm_divpt_hps_new[i+1]
-            d1 = uab.findTwoPointsDistance(v0, v1)
-            d2 = uab.findTwoPointsDistance(v0, v2)
+            # d1 = uab.findTwoPointsDistance(v0, v1)
+            # d2 = uab.findTwoPointsDistance(v0, v2)
+            d1 = utl.getDistance(v0, v1)
+            d2 = utl.getDistance(v0, v1)
             if d1 < d2:
                 v_near_hps.append(v1)
             elif d1 > d2:
@@ -807,10 +810,11 @@ def createAirfoil(project_name, control_file):
         sec_3 = sec_o
         sec_31 = time.time()
         f_log.write('    -> Copy the sketch: ' + str(sec_31 - sec_3) + '\n')
-    #    print '    -> Copy the sketch: ', str(sec_31 - sec_3)
+        if gcs.DEBUG:
+            print '    -> Copy the sketch: ', str(sec_31 - sec_3)
         gp = ssp.geometry
         
-        ssp.Line(point1 = sgm_divpt_lps_new[0], point2 = v_near_lps[0])
+        # ssp.Line(point1 = sgm_divpt_lps_new[0], point2 = v_near_lps[0])
         for i in range(1, len(v_near_lps) - 1):
             ps = sgm_divpt_lps_new[i]
             pe = v_near_lps[i]
@@ -824,9 +828,94 @@ def createAirfoil(project_name, control_file):
         f_log.write('    -> Draw segment walls: ' + str(sec_32 - sec_31) + '\n')
     #    print '    -> Draw segment walls: ', str(sec_32 - sec_31)
         gp = ssp.geometry
-        
+
         sgm_lyr_id_lps = []
-        for i in range(len(sgm_id_lps_out) - 1):
+        sgm_lyr_id_hps = []
+        # if gcs.TRIM_LEADING_EDGE:
+        # Partition sketch for the leading edge
+        lyp_id_lps = sgm_pt_id_lps[0][2]
+        lyp_id_hps = sgm_pt_id_hps[0][2]
+        lyp_lps = mc.layups[lyp_id_lps][1]
+        lyp_hps = mc.layups[lyp_id_hps][1]
+        temp_lps_id = sgm_id_lps_out[0]
+        temp_hps_id = sgm_id_hps_out[0]
+        sgm_lyr_id_lps.append([temp_lps_id])
+        sgm_lyr_id_hps.append([temp_hps_id])
+        temp_lps = gp[temp_lps_id]
+        temp_hps = gp[temp_hps_id]
+        tl = 0
+        th = 0
+        temp_curve_id_list = [temp_lps_id]
+        for i in range(len(lyp_lps) - 1):
+            gp = ssp.geometry
+            gpk_before = gp.keys()
+            # if gcs.DEBUG:
+            #     print 'Offset layer {0}'.format(i)
+            #     print '  Last 10 geometry ids before offset:', gpk_before[-10:]
+            tl += lyp_lps[i][0]
+            th += lyp_hps[i][0]
+            if mc.flip == 'No':
+                ssp.offset(objectList = (temp_lps,), distance = tl, side = LEFT)
+                ssp.offset(objectList = (temp_hps,), distance = th, side = LEFT)
+            elif mc.flip == 'Yes':
+                ssp.offset(objectList = (temp_lps,), distance = tl, side = RIGHT, filletCorners = True)
+                ssp.offset(objectList = (temp_hps,), distance = th, side = RIGHT, filletCorners = True)
+            gp = ssp.geometry
+            gpk = gp.keys()
+            # if gcs.DEBUG:
+            #     print '  Last 10 geometry ids after offset:', gpk[-10:]
+            for i in range(len(gpk_before), len(gpk)):
+                if gp[gpk[i]].getVertices()[0].coords == gp[gpk[i]].getVertices()[-1].coords:
+                    ssp.delete(objectList = (gp[gpk[i]],))
+            gp = ssp.geometry
+            gpk = gp.keys()
+            # if gcs.DEBUG:
+            #     print '  Last 10 geometry ids after offset:', gpk[-10:]
+            id_1 = gpk[-2]
+            id_2 = gpk[-1]
+            coords_lps = gp[id_1].getVertices()[-1].coords
+            coords_hps = gp[id_2].getVertices()[0].coords
+            # if gcs.DEBUG:
+            #     print '  id_1', id_1
+            #     print '  id_2', id_2
+            #     print '  coords_lps', coords_lps
+            #     print '  coords_hps', coords_hps
+            #     print '  Distance', utl.getDistance(coords_lps, coords_hps)
+            if utl.getDistance(coords_lps, coords_hps) > gcs.TOLERANCE:
+                [new_id_lps, new_id_hps] = uab.trimIntersectCurves(ssp, id_1, 1, id_2, 2, (1.0, 0.0))
+            else:
+                new_id_lps, new_id_hps = id_1, id_2
+            # if gcs.DEBUG:
+            #     print '  new_id_lps', new_id_lps
+            #     print '  new_id_hps', new_id_hps
+            sgm_lyr_id_lps[-1].append(new_id_lps)
+            sgm_lyr_id_hps[-1].append(new_id_hps)
+            # if gcs.DEBUG:
+            #     print '  sgm_lyr_id_lps[-1]', sgm_lyr_id_lps[-1]
+            #     print '  sgm_lyr_id_hps[-1]', sgm_lyr_id_hps[-1]
+            temp_curve_id_list.append(new_id_lps)
+        temp_curve_id_list.append(sgm_id_lps_in[0])
+        sgm_lyr_id_lps[-1].append(sgm_id_lps_in[0])
+        sgm_lyr_id_hps[-1].append(sgm_id_hps_in[0])
+        # sec_35 = time.time()
+        # f_log.write('    -> Draw layers of the leading edge: ' + str(sec_35 - sec_34) + '\n')
+    #    print '    -> Draw layers of the leading edge: ', str(sec_35 - sec_34)
+        
+        gp = ssp.geometry
+        for i in range(len(temp_curve_id_list) - 1):
+            id_1 = temp_curve_id_list[i]
+            id_2 = temp_curve_id_list[i+1]
+            v = gp[id_1].getVertices()
+            v_1 = v[-1].coords
+            v = gp[id_2].getVertices()
+            v_2 = v[-1].coords
+            ssp.Line(point1 = v_1, point2 = v_2)
+        # sec_36 = time.time()
+        # f_log.write('    -> Draw segment wall of the leading edge: ' + str(sec_36 - sec_35) + '\n')
+    #    print '    -> Draw segment wall of the leading edge: ', str(sec_36 - sec_35)
+        
+        # sgm_lyr_id_lps = []
+        for i in range(1, len(sgm_id_lps_out) - 1):
             sgm_id = sgm_id_lps_out[i]
             sgm_lyr_id_lps.append([sgm_id])
             sgm = gp[sgm_id]
@@ -846,8 +935,8 @@ def createAirfoil(project_name, control_file):
         f_log.write('    -> Draw layers of the lower pressure surface: ' + str(sec_33 - sec_32) + '\n')
     #    print '    -> Draw layers of the lower pressure surface: ', str(sec_33 - sec_32)
         
-        sgm_lyr_id_hps = []
-        for i in range(len(sgm_id_hps_out) - 1):
+        # sgm_lyr_id_hps = []
+        for i in range(1, len(sgm_id_hps_out) - 1):
             sgm_id = sgm_id_hps_out[i]
             sgm_lyr_id_hps.append([sgm_id])
             sgm = gp[sgm_id]
@@ -1174,69 +1263,87 @@ def createAirfoil(project_name, control_file):
         sgm_lyr_fpt_lps = []
         sgm_ept_lps_out = []
         for i in range(len(sgm_id_lps_out)):
-            sid = sgm_id_lps_out[i]
-            edge_lps_out = gt[sid]
-            vt = edge_lps_out.getVertices()
-            end_v = vt[0].coords
-            ept = edge_lps_out.getPointAtDistance(
-                point=end_v, distance=50, percentage=True
-            )
+            ept = uab.getAPointOnLine(st, sgm_id_lps_out[i])
             sgm_ept_lps_out.append(ept)
-            lyp_id = sgm_pt_id_lps[i][2]
-            lyp = mc.layups[lyp_id][1]
-            sgm_lyr_fpt_lps.append([])
-            t0 = 0.0
-            for j in range(len(lyp)):
-                t = lyp[j][0] / 2 + t0
-                st.offset(
-                    objectList=(edge_lps_out,),
-                    distance=t,
-                    side=LEFT
-                )
-                gt = st.geometry
-                gtk = gt.keys()
-                mid_curve = gt[gtk[-1]]
-                vt = mid_curve.getVertices()
-                end_v = vt[1].coords
-                mid_v = mid_curve.getPointAtDistance(
-                    point=end_v, distance=25, percentage=True
-                )
-                sgm_lyr_fpt_lps[i].append(mid_v)
-                t0 += lyp[j][0]
+            fpt = []
+            for j in range(len(sgm_lyr_id_lps[i])-1):
+                p1 = uab.getAPointOnLine(st, sgm_lyr_id_lps[i][j])
+                p2 = uab.getAPointOnLine(st, sgm_lyr_id_lps[i][j+1])
+                pmid = utl.getMidPoint2(p1, p2)
+                fpt.append(pmid)
+            sgm_lyr_fpt_lps.append(fpt)
+            # sid = sgm_id_lps_out[i]
+            # edge_lps_out = gt[sid]
+            # vt = edge_lps_out.getVertices()
+            # end_v = vt[0].coords
+            # ept = edge_lps_out.getPointAtDistance(
+            #     point=end_v, distance=50, percentage=True
+            # )
+            # sgm_ept_lps_out.append(ept)
+            # lyp_id = sgm_pt_id_lps[i][2]
+            # lyp = mc.layups[lyp_id][1]
+            # sgm_lyr_fpt_lps.append([])
+            # t0 = 0.0
+            # for j in range(len(lyp)):
+            #     t = lyp[j][0] / 2 + t0
+            #     st.offset(
+            #         objectList=(edge_lps_out,),
+            #         distance=t,
+            #         side=LEFT
+            #     )
+            #     gt = st.geometry
+            #     gtk = gt.keys()
+            #     mid_curve = gt[gtk[-1]]
+            #     vt = mid_curve.getVertices()
+            #     end_v = vt[1].coords
+            #     mid_v = mid_curve.getPointAtDistance(
+            #         point=end_v, distance=25, percentage=True
+            #     )
+            #     sgm_lyr_fpt_lps[i].append(mid_v)
+            #     t0 += lyp[j][0]
         
         gt = st.geometry
         sgm_lyr_fpt_hps = []
         sgm_ept_hps_out = []
         for i in range(len(sgm_id_hps_out)):
-            sid = sgm_id_hps_out[i]
-            edge_hps_out = gt[sid]
-            vt = edge_hps_out.getVertices()
-            end_v = vt[0].coords
-            ept = edge_hps_out.getPointAtDistance(
-                point=end_v, distance=50, percentage=True
-            )
+            ept = uab.getAPointOnLine(st, sgm_id_hps_out[i])
             sgm_ept_hps_out.append(ept)
-            lyp_id = sgm_pt_id_hps[i][2]
-            lyp = mc.layups[lyp_id][1]
-            sgm_lyr_fpt_hps.append([])
-            t0 = 0.0
-            for j in range(len(lyp)):
-                t = lyp[j][0] / 2 + t0
-                st.offset(
-                    objectList=(edge_hps_out,),
-                    distance=t,
-                    side=LEFT
-                )
-                gt = st.geometry
-                gtk = gt.keys()
-                mid_curve = gt[gtk[-1]]
-                vt = mid_curve.getVertices()
-                end_v = vt[0].coords
-                mid_v = mid_curve.getPointAtDistance(
-                    point=end_v, distance=25, percentage=True
-                )
-                sgm_lyr_fpt_hps[i].append(mid_v)
-                t0 += lyp[j][0]
+            fpt = []
+            for j in range(len(sgm_lyr_id_hps[i])-1):
+                p1 = uab.getAPointOnLine(st, sgm_lyr_id_hps[i][j])
+                p2 = uab.getAPointOnLine(st, sgm_lyr_id_hps[i][j+1])
+                pmid = utl.getMidPoint2(p1, p2)
+                fpt.append(pmid)
+            sgm_lyr_fpt_hps.append(fpt)
+            # sid = sgm_id_hps_out[i]
+            # edge_hps_out = gt[sid]
+            # vt = edge_hps_out.getVertices()
+            # end_v = vt[0].coords
+            # ept = edge_hps_out.getPointAtDistance(
+            #     point=end_v, distance=50, percentage=True
+            # )
+            # sgm_ept_hps_out.append(ept)
+            # lyp_id = sgm_pt_id_hps[i][2]
+            # lyp = mc.layups[lyp_id][1]
+            # sgm_lyr_fpt_hps.append([])
+            # t0 = 0.0
+            # for j in range(len(lyp)):
+            #     t = lyp[j][0] / 2 + t0
+            #     st.offset(
+            #         objectList=(edge_hps_out,),
+            #         distance=t,
+            #         side=LEFT
+            #     )
+            #     gt = st.geometry
+            #     gtk = gt.keys()
+            #     mid_curve = gt[gtk[-1]]
+            #     vt = mid_curve.getVertices()
+            #     end_v = vt[0].coords
+            #     mid_v = mid_curve.getPointAtDistance(
+            #         point=end_v, distance=25, percentage=True
+            #     )
+            #     sgm_lyr_fpt_hps[i].append(mid_v)
+            #     t0 += lyp[j][0]
                 
         del model.sketches[st_name]
         
@@ -1411,6 +1518,8 @@ def createAirfoil(project_name, control_file):
                 mtr_id = fills[k]
                 mtr_name = mc.mid_name[mtr_id]
                 sn = mtr_name + '_0.0'
+                if not sn in model.sections.keys():
+                    model.HomogeneousSolidSection(name = sn, material = mtr_name, thickness = None)
                 pt = (0.0,) + v
                 ff = f.findAt((pt,))
                 fill_fid.append(ff[0].index)
